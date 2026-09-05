@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": 1,
+      "name": "multiple consequence domains discovered without a supplied final checklist",
+      "passed": true,
+      "detail": "9 runtime nodes across 9 domains"
+    },
+    {
+      "id": 2,
+      "name": "non-applicable consequence becomes DOES_NOT_APPLY",
+      "passed": true,
+      "detail": [
+        "Professional license transfer or applicability"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "a consequence legitimately spawns a downstream consequence",
+      "passed": true,
+      "detail": [
+        "Out-of-state vehicle identification inspection (VIN inspection)"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "duplicate investigations are prevented",
+      "passed": true,
+      "detail": 0
+    },
+    {
+      "id": 5,
+      "name": "maximum-depth and stopping safeguards work",
+      "passed": true,
+      "detail": {
+        "duplicate_blocks": 0,
+        "already_investigated_blocks": 0,
+        "max_depth_blocks": 0,
+        "max_nodes_blocks": 0,
+        "missing_evidence_coercions": 0,
+        "stop_reason": "NO_NEW_CONSEQUENCES"
+      }
+    },
+    {
+      "id": 6,
+      "name": "missing evidence produces UNKNOWN",
+      "passed": true,
+      "detail": [
+        "USPS mail forwarding setup",
+        "Jury duty eligibility and registration in new county"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "every conclusion retains evidence and reason",
+      "passed": true,
+      "detail": "checked 10 terminal nodes"
+    },
+    {
+      "id": 8,
+      "name": "final graph is generated at runtime",
+      "passed": true,
+      "detail": {
+        "run_id": "run_b454316c7f",
+        "generated_at": "2026-09-05T20:17:43Z"
+      }
+    }
+  ]
+}

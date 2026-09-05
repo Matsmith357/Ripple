@@ -2,6 +2,8 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
+import { runRipple } from "./ripple";
+import { z } from "zod";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -15,6 +17,16 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+  }),
+
+  ripple: router({
+    run: publicProcedure
+      .input(
+        z.object({
+          moveDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        }),
+      )
+      .mutation(({ input }) => runRipple(input.moveDate)),
   }),
 
   // TODO: add feature routers here, e.g.

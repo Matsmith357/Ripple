@@ -1,0 +1,107 @@
+{
+  "catalog_version": "checkpoint-1.synthetic.1",
+  "label": "CONTROLLED MOCK/SYNTHETIC EVIDENCE — NOT LEGAL ADVICE",
+  "replaceable_by": "A future EvidenceProvider implementation backed by verified public sources",
+  "documents": [
+    {
+      "source_id": "MOCK-OH-BMV-DL-001",
+      "source_type": "MOCK_SYNTHETIC",
+      "publisher": "Ripple controlled evidence lab",
+      "title": "Ohio new-resident driver credential rule",
+      "domains": ["driving", "identity", "driver license"],
+      "keywords": ["move", "new resident", "driver", "license", "driving privilege", "ohio", "indiana"],
+      "content": "Synthetic rule for Checkpoint 1: a new Ohio resident who will drive must obtain an Ohio driver license within 30 days after establishing Ohio residency. The prior Indiana credential is evidence that the person currently holds an out-of-state license, not proof that the Ohio step is complete.",
+      "effective_note": "Static mock; intentionally replaceable in Checkpoint 2"
+    },
+    {
+      "source_id": "MOCK-OH-BMV-VEH-002",
+      "source_type": "MOCK_SYNTHETIC",
+      "publisher": "Ripple controlled evidence lab",
+      "title": "Ohio title and registration sequence for an out-of-state vehicle",
+      "domains": ["vehicle", "registration", "title"],
+      "keywords": ["personally owned vehicle", "vehicle", "car", "title", "registration", "plates", "new resident", "ohio"],
+      "content": "Synthetic rule for Checkpoint 1: an Ohio newcomer bringing a personally owned vehicle must transfer the out-of-state title and register the vehicle in Ohio within 30 days. Registration follows issuance of an Ohio title. An out-of-state vehicle identification inspection is a prerequisite to the title transfer.",
+      "effective_note": "Static mock; intentionally replaceable in Checkpoint 2"
+    },
+    {
+      "source_id": "MOCK-OH-BMV-VIN-003",
+      "source_type": "MOCK_SYNTHETIC",
+      "publisher": "Ripple controlled evidence lab",
+      "title": "Out-of-state vehicle identification inspection prerequisite",
+      "domains": ["vehicle", "inspection", "title"],
+      "keywords": ["vin", "vehicle identification", "inspection", "out-of-state vehicle", "title prerequisite", "title transfer"],
+      "content": "Synthetic rule for Checkpoint 1: before an Ohio title can be issued for a vehicle previously titled outside Ohio, the vehicle must pass an out-of-state vehicle identification inspection. The inspection result is evidence used in the later title transaction.",
+      "effective_note": "Static mock; intentionally replaceable in Checkpoint 2"
+    },
+    {
+      "source_id": "MOCK-INS-MOVE-004",
+      "source_type": "MOCK_SYNTHETIC",
+      "publisher": "Ripple controlled evidence lab",
+      "title": "Personal auto policy relocation review",
+      "domains": ["insurance", "vehicle", "financial"],
+      "keywords": ["auto insurance", "insurer", "policy", "garaging address", "move", "coverage", "premium"],
+      "content": "Synthetic rule for Checkpoint 1: a policyholder who permanently moves a covered vehicle to another state must promptly tell the insurer the new residence and garaging address. The insurer must confirm whether policy forms, limits, underwriting, or premium change; the mock source does not assert what those changes will be.",
+      "effective_note": "Static mock; intentionally replaceable in Checkpoint 2"
+    },
+    {
+      "source_id": "MOCK-OH-ELECTION-005",
+      "source_type": "MOCK_SYNTHETIC",
+      "publisher": "Ripple controlled evidence lab",
+      "title": "Voter registration after an interstate move",
+      "domains": ["civic", "voter registration", "elections"],
+      "keywords": ["vote", "voter", "registration", "citizen", "address", "move", "ohio"],
+      "content": "Synthetic rule for Checkpoint 1: voter registration does not transfer automatically between Indiana and Ohio. A United States citizen who becomes an Ohio resident may submit a new or updated Ohio voter registration. The mock evidence does not identify a specific upcoming election deadline.",
+      "effective_note": "Static mock; intentionally replaceable in Checkpoint 2"
+    },
+    {
+      "source_id": "MOCK-PAYROLL-MOVE-006",
+      "source_type": "MOCK_SYNTHETIC",
+      "publisher": "Ripple controlled evidence lab",
+      "title": "Employer payroll address and withholding review",
+      "domains": ["employment", "payroll", "tax"],
+      "keywords": ["employer", "employment", "payroll", "withholding", "work location", "home address", "municipal tax", "move"],
+      "content": "Synthetic rule for Checkpoint 1: an employee who changes state and local residence should notify the employer so payroll can review home address, work location, and applicable state or municipal withholding. This source does not determine Alex's work location or final tax liability.",
+      "effective_note": "Static mock; intentionally replaceable in Checkpoint 2"
+    },
+    {
+      "source_id": "MOCK-PRO-LICENSE-007",
+      "source_type": "MOCK_SYNTHETIC",
+      "publisher": "Ripple controlled evidence lab",
+      "title": "Professional license portability trigger",
+      "domains": ["professional licensing", "employment"],
+      "keywords": ["professional license", "licensed profession", "occupation", "credential", "reciprocity", "move"],
+      "content": "Synthetic applicability rule for Checkpoint 1: interstate professional-license transfer or reciprocity is material only when the person holds, uses, or needs a state-issued professional license for the relevant work.",
+      "effective_note": "Static mock; intentionally replaceable in Checkpoint 2"
+    },
+    {
+      "source_id": "MOCK-SCHOOL-008",
+      "source_type": "MOCK_SYNTHETIC",
+      "publisher": "Ripple controlled evidence lab",
+      "title": "Dependent school enrollment trigger",
+      "domains": ["family", "education", "school"],
+      "keywords": ["children", "child", "dependent", "school", "enrollment", "district", "move"],
+      "content": "Synthetic applicability rule for Checkpoint 1: school withdrawal, records transfer, and enrollment consequences arise when the relocating household includes a child who needs school placement.",
+      "effective_note": "Static mock; intentionally replaceable in Checkpoint 2"
+    },
+    {
+      "source_id": "MOCK-BUSINESS-009",
+      "source_type": "MOCK_SYNTHETIC",
+      "publisher": "Ripple controlled evidence lab",
+      "title": "Business registration relocation trigger",
+      "domains": ["business", "entity registration", "tax"],
+      "keywords": ["business", "company", "registered agent", "entity", "foreign qualification", "move"],
+      "content": "Synthetic applicability rule for Checkpoint 1: entity registration, registered-agent, or foreign-qualification consequences require the relocating person to own or operate a business affected by the move.",
+      "effective_note": "Static mock; intentionally replaceable in Checkpoint 2"
+    },
+    {
+      "source_id": "MOCK-BENEFITS-010",
+      "source_type": "MOCK_SYNTHETIC",
+      "publisher": "Ripple controlled evidence lab",
+      "title": "Government benefit address and eligibility trigger",
+      "domains": ["benefits", "government programs"],
+      "keywords": ["government benefits", "benefit", "medicaid", "snap", "assistance", "eligibility", "address", "move"],
+      "content": "Synthetic applicability rule for Checkpoint 1: a move may require an address or eligibility review for a government program only when the person receives or has a pending claim for such benefits.",
+      "effective_note": "Static mock; intentionally replaceable in Checkpoint 2"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+UI verification, 2026-09-05
+
+- Desktop pre-run state renders a two-column layout with the Alex Morgan scenario, configurable move date, Run Ripple button, and an explicit empty graph state.
+- Clicking Run Ripple successfully transitions the interface into a visible live-investigation state with a disabled running button and rotating phase label.
+- The browser action reached the server-backed mutation; final result rendering remains to be checked after completion.
+
+The end-to-end browser run completed successfully. It rendered 10 discovered consequences, 7 ACTION_NEEDED nodes, 1 UNKNOWN node, 2 DOES_NOT_APPLY nodes, and a maximum depth of 2. The vehicle registration node spawned an out-of-state vehicle identification inspection child. The page displayed node-specific reasons, synthetic evidence, model reasoning, child counts, and a 49-step agent/tool trace ending with NO_NEW_CONSEQUENCES. The browser console contained no errors.
