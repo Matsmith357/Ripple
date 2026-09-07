@@ -1,0 +1,201 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": 1,
+      "name": "real authoritative evidence replaces synthetic evidence for supported conclusions",
+      "passed": true,
+      "detail": "9 prepared actions; all require at least one PRIMARY_OFFICIAL source"
+    },
+    {
+      "id": 2,
+      "name": "mock evidence is never presented as real",
+      "passed": true,
+      "detail": "checked every source on 12 non-root nodes"
+    },
+    {
+      "id": 3,
+      "name": "retrieved evidence and model reasoning remain separate",
+      "passed": true,
+      "detail": "model_reasoning and evidence are distinct node fields"
+    },
+    {
+      "id": 4,
+      "name": "ACTION_PREPARED requires sufficient node-bound primary evidence",
+      "passed": true,
+      "detail": [
+        "Obtain Ohio driver's license within state deadline",
+        "Register vehicle in Ohio and obtain Ohio plates",
+        "Update auto insurance to Ohio residency and verify coverage",
+        "Update voter registration to Ohio",
+        "Change state income tax withholding and file resident tax in Ohio",
+        "Employer payroll/state registration uncertainty (work location unknown)",
+        "Gather two acceptable documents proving Ohio street address",
+        "Transfer out-of-state title at County Clerk of Courts Title Office",
+        "Find Alex's Ohio school district using Ohio Taxation 'Finder',"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "missing or weak evidence becomes UNKNOWN",
+      "passed": true,
+      "detail": [
+        "Jury duty eligibility in Ohio"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "applicability is resolved from Alex's declared context",
+      "passed": true,
+      "detail": "verified trigger paths for 9 prepared actions"
+    },
+    {
+      "id": 7,
+      "name": "deadlines are traceable and unsupported deadlines remain UNKNOWN",
+      "passed": true,
+      "detail": [
+        {
+          "title": "Obtain Ohio driver's license within state deadline",
+          "when": "Within 30 days of establishing Ohio residency.",
+          "source": "OFFICIAL-9F69F51BA606"
+        },
+        {
+          "title": "Register vehicle in Ohio and obtain Ohio plates",
+          "when": "Within 30 days of establishing Ohio residency.",
+          "source": "OFFICIAL-9F69F51BA606"
+        },
+        {
+          "title": "Update auto insurance to Ohio residency and verify coverage",
+          "when": "UNKNOWN",
+          "source": null
+        },
+        {
+          "title": "Update voter registration to Ohio",
+          "when": "Received or postmarked by the 30th day before the election in which Alex intends to vote.",
+          "source": "OFFICIAL-30CBBF532A83"
+        },
+        {
+          "title": "Change state income tax withholding and file resident tax in Ohio",
+          "when": "Immediately after moving during the tax year.",
+          "source": "OFFICIAL-A999DEBD3611"
+        },
+        {
+          "title": "Jury duty eligibility in Ohio",
+          "when": "UNKNOWN",
+          "source": null
+        },
+        {
+          "title": "Professional license applicability check (none held)",
+          "when": "UNKNOWN",
+          "source": null
+        },
+        {
+          "title": "Employer payroll/state registration uncertainty (work location unknown)",
+          "when": "Immediately after moving during the tax year.",
+          "source": "OFFICIAL-A999DEBD3611"
+        },
+        {
+          "title": "Gather two acceptable documents proving Ohio street address",
+          "when": "UNKNOWN",
+          "source": null
+        },
+        {
+          "title": "Transfer out-of-state title at County Clerk of Courts Title Office",
+          "when": "Within 30 days of establishing Ohio residency.",
+          "source": "OFFICIAL-9F69F51BA606"
+        },
+        {
+          "title": "Find Alex's Ohio school district using Ohio Taxation 'Finder',",
+          "when": "UNKNOWN",
+          "source": null
+        },
+        {
+          "title": "Transfer or notify Ohio professional licensing board(s)",
+          "when": "UNKNOWN",
+          "source": null
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "at least one downstream consequence was discovered from parent-bound evidence",
+      "passed": true,
+      "detail": [
+        {
+          "title": "Gather two acceptable documents proving Ohio street address",
+          "parent": "c_02_aadf5e",
+          "caused_by": "OFFICIAL-02DC074F10D5"
+        },
+        {
+          "title": "Transfer out-of-state title at County Clerk of Courts Title Office",
+          "parent": "c_03_277551",
+          "caused_by": "OFFICIAL-1B9134B1DD5F"
+        },
+        {
+          "title": "Find Alex's Ohio school district using Ohio Taxation 'Finder',",
+          "parent": "c_06_b5676f",
+          "caused_by": "OFFICIAL-12EDE2182D7C"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "duplicate, depth, node-budget, already-investigated, and stopping safeguards remain active",
+      "passed": true,
+      "detail": {
+        "config": {
+          "max_depth": 3,
+          "max_nodes": 14
+        },
+        "runtime": {
+          "duplicate_blocks": 1,
+          "already_investigated_blocks": 0,
+          "max_depth_blocks": 0,
+          "max_nodes_blocks": 0,
+          "missing_evidence_coercions": 0,
+          "weak_evidence_coercions": 0,
+          "applicability_coercions": 0,
+          "deadline_coercions": 4,
+          "unsupported_action_coercions": 0,
+          "human_decision_coercions": 0,
+          "tool_payload_repairs": 0,
+          "tool_payload_rejections": 4,
+          "stop_reason": "NO_NEW_CONSEQUENCES"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "name": "Checkpoint 1 discovery and uncertainty behavior remains present",
+      "passed": true,
+      "detail": "12 nodes across 12 domains"
+    },
+    {
+      "id": 11,
+      "name": "source URLs and complete provenance reach the graph",
+      "passed": true,
+      "detail": "checked 32 evidence records"
+    },
+    {
+      "id": 12,
+      "name": "the final graph is runtime-generated rather than a static Ohio checklist",
+      "passed": true,
+      "detail": {
+        "run_id": "run_4ffef14916",
+        "generated_at": "2026-09-07T18:03:14Z"
+      }
+    },
+    {
+      "id": 13,
+      "name": "every investigated node retains action fields, evidence, reason, and uncertainty",
+      "passed": true,
+      "detail": "checked 13 terminal nodes"
+    },
+    {
+      "id": 14,
+      "name": "HUMAN_DECISION is used only for an evidenced choice",
+      "passed": true,
+      "detail": "No HUMAN_DECISION node was required"
+    }
+  ]
+}

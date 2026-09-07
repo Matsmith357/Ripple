@@ -13,6 +13,8 @@ import {
   CircleDot,
   Clock3,
   Database,
+  ExternalLink,
+  FileCheck2,
   GitBranch,
   HelpCircle,
   LoaderCircle,
@@ -27,7 +29,7 @@ import { useEffect, useMemo, useState } from "react";
 const statusStyles: Record<string, string> = {
   RESOLVED: "bg-slate-100 text-slate-700 border-slate-200",
   DOES_NOT_APPLY: "bg-zinc-100 text-zinc-600 border-zinc-200",
-  ACTION_NEEDED: "bg-amber-50 text-amber-800 border-amber-200",
+  ACTION_PREPARED: "bg-amber-50 text-amber-800 border-amber-200",
   HUMAN_DECISION: "bg-violet-50 text-violet-800 border-violet-200",
   UNKNOWN: "bg-rose-50 text-rose-800 border-rose-200",
   PENDING: "bg-sky-50 text-sky-800 border-sky-200",
@@ -36,7 +38,7 @@ const statusStyles: Record<string, string> = {
 const statusIcon: Record<string, typeof CheckCircle2> = {
   RESOLVED: CheckCircle2,
   DOES_NOT_APPLY: XCircle,
-  ACTION_NEEDED: AlertTriangle,
+  ACTION_PREPARED: FileCheck2,
   HUMAN_DECISION: CircleDot,
   UNKNOWN: HelpCircle,
 };
@@ -44,12 +46,39 @@ const statusIcon: Record<string, typeof CheckCircle2> = {
 type Evidence = {
   source_id: string;
   source_type: string;
+  source_url: string | null;
   publisher: string;
   title: string;
   excerpt: string;
   retrieved_at: string;
   query: string;
+  retrieval_context: string;
+  supports: string[];
+  limitations: string;
+  deadline: { text: string; kind: string; days?: number } | null;
+  destination: string | null;
+  required_items: string[];
   synthetic: boolean;
+};
+
+type Action = {
+  what: string;
+  why: string;
+  when: string;
+  deadline_source_id: string | null;
+  where: string;
+  need: string[];
+  depends_on: string | null;
+  decision_options: string[];
+  status: string;
+};
+
+type Applicability = {
+  rule: string;
+  why_applies: string;
+  trigger_facts: string[];
+  resolved_facts: Record<string, unknown>;
+  unresolved_facts: string[];
 };
 
 type Node = {
@@ -65,6 +94,10 @@ type Node = {
   spawned_consequences: string[];
   why_investigated: string;
   model_reasoning: string;
+  caused_by_evidence_id: string | null;
+  applicability: Applicability;
+  action: Action;
+  uncertainty: string[];
 };
 
 type Run = {
@@ -96,17 +129,35 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
+const qualityStyles: Record<string, string> = {
+  PRIMARY_OFFICIAL: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  AUTHORITATIVE_SECONDARY: "border-sky-200 bg-sky-50 text-sky-800",
+  UNVERIFIED: "border-orange-200 bg-orange-50 text-orange-800",
+  EVIDENCE_GAP: "border-rose-200 bg-rose-50 text-rose-800",
+  SYNTHETIC_SCENARIO: "border-slate-200 bg-slate-50 text-slate-700",
+};
+
+function DetailRow({ label, value }: { label: string; value: string | null | undefined }) {
+  return (
+    <div className="grid gap-1 border-t border-[#edf0ee] py-2.5 sm:grid-cols-[92px_1fr]">
+      <dt className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#7b8781]">{label}</dt>
+      <dd className="text-xs leading-5 text-[#364740]">{value || "UNKNOWN"}</dd>
+    </div>
+  );
+}
+
 function GraphNode({
   node,
   children,
-  selected,
+  selectedId,
   onSelect,
 }: {
   node: Node;
   children: Node[];
-  selected: boolean;
+  selectedId: string | null;
   onSelect: (id: string) => void;
 }) {
+  const selected = node.id === selectedId;
   return (
     <div className="relative">
       <button
@@ -135,7 +186,7 @@ function GraphNode({
               key={child.id}
               node={child}
               children={[]}
-              selected={false}
+              selectedId={selectedId}
               onSelect={onSelect}
             />
           ))}
@@ -161,8 +212,8 @@ export default function Home() {
   const phases = [
     "Reading the event and person context",
     "Discovering possible consequence domains",
-    "Retrieving controlled evidence",
-    "Resolving applicability and uncertainty",
+    "Retrieving verified public evidence",
+    "Applying source-quality and applicability guards",
     "Following downstream consequences",
     "Checking stopping conditions",
   ];
@@ -198,14 +249,14 @@ export default function Home() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-bold tracking-[-0.03em]">Ripple</h1>
-                <Badge className="rounded-full bg-[#e8eee9] text-[10px] font-semibold text-[#40584e] hover:bg-[#e8eee9]">CHECKPOINT 1</Badge>
+                <Badge className="rounded-full bg-[#e8eee9] text-[10px] font-semibold text-[#40584e] hover:bg-[#e8eee9]">CHECKPOINT 2</Badge>
               </div>
               <p className="text-xs text-[#6c7772]">Consequence discovery, not task completion</p>
             </div>
           </div>
           <div className="hidden items-center gap-2 text-xs text-[#65736c] sm:flex">
             <BrainCircuit className="size-4 text-[#d75d3e]" />
-            Strands reasoning · controlled evidence
+            Strands reasoning · verified public evidence
           </div>
         </div>
       </header>
@@ -307,7 +358,7 @@ export default function Home() {
               <>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   <Card className="rounded-2xl border-[#dce2de] bg-white p-4 shadow-sm"><p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#7b8781]">Discovered</p><p className="mt-1 text-2xl font-bold">{nodes.length - 1}</p></Card>
-                  <Card className="rounded-2xl border-[#dce2de] bg-white p-4 shadow-sm"><p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#7b8781]">Action needed</p><p className="mt-1 text-2xl font-bold text-amber-700">{statusCounts.ACTION_NEEDED ?? 0}</p></Card>
+                  <Card className="rounded-2xl border-[#dce2de] bg-white p-4 shadow-sm"><p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#7b8781]">Actions prepared</p><p className="mt-1 text-2xl font-bold text-amber-700">{statusCounts.ACTION_PREPARED ?? 0}</p></Card>
                   <Card className="rounded-2xl border-[#dce2de] bg-white p-4 shadow-sm"><p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#7b8781]">Unknown</p><p className="mt-1 text-2xl font-bold text-rose-700">{statusCounts.UNKNOWN ?? 0}</p></Card>
                   <Card className="rounded-2xl border-[#dce2de] bg-white p-4 shadow-sm"><p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#7b8781]">Max depth used</p><p className="mt-1 text-2xl font-bold">{Math.max(...nodes.map(node => node.depth))}</p></Card>
                 </div>
@@ -325,7 +376,7 @@ export default function Home() {
                     )}
                     <div className="grid gap-3 md:grid-cols-2">
                       {firstOrder.map(node => (
-                        <GraphNode key={node.id} node={node} children={nodes.filter(item => item.parent_id === node.id)} selected={selectedId === node.id} onSelect={setSelectedId} />
+                        <GraphNode key={node.id} node={node} children={nodes.filter(item => item.parent_id === node.id)} selectedId={selectedId} onSelect={setSelectedId} />
                       ))}
                     </div>
                   </Card>
@@ -337,9 +388,45 @@ export default function Home() {
                           <div className="flex items-start justify-between gap-3"><div><p className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[#7b8781]">Node inspection</p><h3 className="mt-2 text-xl font-semibold leading-7 tracking-[-0.025em]">{selected.title}</h3></div><StatusBadge status={selected.status} /></div>
                           <div className="mt-6 space-y-5">
                             <section><p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#65736d]"><GitBranch className="size-3.5" />Why was this investigated?</p><p className="rounded-xl bg-[#f5f7f5] p-3 text-sm leading-6 text-[#46564f]">{selected.why_investigated}</p></section>
-                            <section><p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#65736d]"><BrainCircuit className="size-3.5" />Why this status?</p><p className="text-sm font-medium leading-6">{selected.reason}</p><p className="mt-2 border-l-2 border-[#e4a08c] pl-3 text-xs leading-5 text-[#68756f]"><span className="font-semibold">Model reasoning:</span> {selected.model_reasoning}</p></section>
-                            <section><p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#65736d]"><Database className="size-3.5" />Retrieved evidence</p><div className="space-y-3">{selected.evidence.map(item => <div key={item.source_id} className="rounded-2xl border border-[#e1e6e3] bg-[#fafbf9] p-4"><div className="flex items-start justify-between gap-2"><p className="text-sm font-semibold">{item.title}</p><Badge variant="outline" className="shrink-0 rounded-full border-amber-200 bg-amber-50 text-[9px] text-amber-800">SYNTHETIC</Badge></div><p className="mt-2 text-xs leading-5 text-[#68756f]">{item.excerpt}</p><p className="mt-3 font-mono text-[9px] uppercase tracking-[0.08em] text-[#8a948f]">{item.source_id} · {item.source_type}</p></div>)}</div></section>
-                            <section><p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#65736d]"><ArrowRight className="size-3.5" />Did it create another consequence?</p><p className="text-sm leading-6 text-[#46564f]">{selected.spawned_consequences.length ? `Yes — ${selected.spawned_consequences.length} child investigation${selected.spawned_consequences.length === 1 ? "" : "s"} spawned.` : "No material downstream consequence was added."}</p></section>
+                            <section>
+                              <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#65736d]"><FileCheck2 className="size-3.5" />Prepared action</p>
+                              <dl className="rounded-2xl border border-[#e1e6e3] bg-[#fafbf9] px-4">
+                                <DetailRow label="What" value={selected.action?.what} />
+                                <DetailRow label="Why" value={selected.action?.why} />
+                                <DetailRow label="When" value={selected.action?.when} />
+                                <DetailRow label="Where" value={selected.action?.where} />
+                                <DetailRow label="Need" value={selected.action?.need?.join(" • ")} />
+                                <DetailRow label="Depends on" value={selected.action?.depends_on} />
+                              </dl>
+                            </section>
+                            <section>
+                              <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#65736d]"><ShieldCheck className="size-3.5" />Applicability to Alex</p>
+                              <p className="text-sm leading-6 text-[#364740]">{selected.applicability?.why_applies || selected.reason}</p>
+                              {selected.applicability?.rule && <p className="mt-2 rounded-xl bg-[#f5f7f5] p-3 text-xs leading-5 text-[#68756f]"><span className="font-semibold">Rule:</span> {selected.applicability.rule}</p>}
+                              {selected.applicability?.trigger_facts?.length > 0 && <p className="mt-2 font-mono text-[10px] leading-5 text-[#78837e]">Context facts: {selected.applicability.trigger_facts.join(" · ")}</p>}
+                            </section>
+                            <section><p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#65736d]"><BrainCircuit className="size-3.5" />Why this status?</p><p className="text-sm font-medium leading-6">{selected.reason}</p><p className="mt-2 border-l-2 border-[#e4a08c] pl-3 text-xs leading-5 text-[#68756f]"><span className="font-semibold">Ripple reasoning:</span> {selected.model_reasoning}</p></section>
+                            <section>
+                              <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#65736d]"><Database className="size-3.5" />Retrieved evidence</p>
+                              <div className="space-y-3">
+                                {selected.evidence.map(item => (
+                                  <div key={item.source_id} className="rounded-2xl border border-[#e1e6e3] bg-[#fafbf9] p-4">
+                                    <div className="flex items-start justify-between gap-2">
+                                      <div>
+                                        {item.source_url ? <a href={item.source_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-[#234d40] underline decoration-[#b8ccc3] underline-offset-4 hover:text-[#d45839]">{item.title}<ExternalLink className="size-3" /></a> : <p className="text-sm font-semibold">{item.title}</p>}
+                                        <p className="mt-1 text-[10px] text-[#78837e]">{item.publisher}</p>
+                                      </div>
+                                      <Badge variant="outline" className={`shrink-0 rounded-full text-[9px] ${qualityStyles[item.source_type] ?? qualityStyles.UNVERIFIED}`}>{item.source_type.replaceAll("_", " ")}</Badge>
+                                    </div>
+                                    <p className="mt-3 whitespace-pre-line text-xs leading-5 text-[#52635b]">{item.excerpt}</p>
+                                    {item.limitations && <p className="mt-3 border-l-2 border-[#e7b5a6] pl-3 text-[11px] leading-5 text-[#78837e]"><span className="font-semibold">Source limitation:</span> {item.limitations}</p>}
+                                    <div className="mt-3 space-y-1 font-mono text-[9px] leading-4 text-[#8a948f]"><p>{item.source_id} · retrieved {item.retrieved_at}</p><p>Query: {item.query}</p><p>{item.retrieval_context}</p></div>
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+                            <section><p className="mb-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#65736d]">Uncertainty</p>{selected.uncertainty?.length ? <ul className="space-y-2">{selected.uncertainty.map((item, index) => <li key={`${index}-${item.slice(0, 24)}`} className="text-xs leading-5 text-[#68756f]">• {item}</li>)}</ul> : <p className="text-xs text-[#78837e]">No unresolved uncertainty recorded.</p>}</section>
+                            <section><p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#65736d]"><ArrowRight className="size-3.5" />Did it create another consequence?</p><p className="text-sm leading-6 text-[#46564f]">{selected.spawned_consequences.length ? `Yes — ${selected.spawned_consequences.length} child investigation${selected.spawned_consequences.length === 1 ? "" : "s"} spawned.` : "No material downstream consequence was added."}</p>{selected.caused_by_evidence_id && <p className="mt-2 font-mono text-[10px] leading-5 text-[#78837e]">This node was caused by parent evidence: {selected.caused_by_evidence_id}</p>}</section>
                           </div>
                         </div>
                       </ScrollArea>

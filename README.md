@@ -1,67 +1,94 @@
-# Ripple — Checkpoint 1
+# Ripple — Checkpoint 2
 
 > **Other agents complete your to-do list. Ripple discovers the to-do list you did not know existed.**
 
-This repository implements **Checkpoint 1 only** for the AWS Agents for Humans hackathon. It proves a Strands Agents SDK reasoning loop that starts with Alex Morgan's interstate move, discovers possible consequences at runtime, retrieves controlled synthetic evidence through tools, resolves applicability, recursively creates downstream investigations, and stops under deterministic safeguards.
+Ripple is a Strands Agents SDK prototype for recursively discovering consequences of a real-world change. This repository implements **Checkpoint 2 only** for one synthetic scenario: Alex Morgan moves from Indianapolis, Indiana, to Columbus, Ohio on a configurable date.
 
-## Run locally
-
-The managed WebDev environment supplies the model proxy credentials. In another environment, set `OPENAI_API_BASE` and `OPENAI_API_KEY` to an OpenAI-compatible endpoint that supports tool calls.
-
-```bash
-pnpm install
-sudo uv pip install --system -r python/requirements.txt
-pnpm dev
-```
-
-Run the engine without the UI:
-
-```bash
-python3 python/ripple_engine.py --move-date 2026-10-01 > result.json
-python3 python/validate_result.py result.json
-```
-
-Run all deterministic tests and build checks:
-
-```bash
-cd python && pytest -q test_ripple_engine.py
-cd .. && pnpm check && pnpm build && pnpm test
-```
+Checkpoint 2 preserves the Checkpoint 1 runtime-discovery engine and replaces its active mock evidence provider with curated snapshots of verified public sources. The runtime graph is still created by Strands reasoning and general-purpose tools. It is not loaded from an Ohio checklist.
 
 ## Architecture
 
-```mermaid
-flowchart LR
-  UI[React scenario UI] --> API[tRPC run mutation]
-  API --> PY[Python request-scoped worker]
-  PY --> SA[Strands Agents SDK]
-  SA --> T[General batch tools]
-  T --> C[Runtime graph store]
-  T --> E[Controlled synthetic evidence provider]
-  C --> G[Graph + activity + provenance JSON]
-  G --> UI
+```text
+React UI
+  → public tRPC mutation
+  → request-scoped Node/Python bridge
+  → Strands discovery agent
+  → general spawn / duplicate guards
+  → Strands recursive investigator
+  → official evidence retrieval tool
+  → deterministic trust and applicability guards
+  → runtime consequence graph + source provenance
 ```
 
-The discovery agent sees the move and person context but no consequence checklist. It creates first-order candidates with `find_existing_node` and `spawn_investigation`. A recursive investigator retrieves evidence with `investigate_domain`, records exactly one terminal status through `record_consequence`, and creates children only when retrieved evidence reveals a material prerequisite or downstream consequence. The engine binds every source to the node that retrieved it and coerces conclusions without node-bound evidence to `UNKNOWN`.
+The Python worker begins with only the root move event and Alex's declared context. The discovery agent proposes direct consequence candidates. The investigator queries the official evidence catalog, records guarded conclusions, and may declare evidence-backed child candidates. The store validates source quality, node binding, Alex-specific trigger facts, deadlines, action claims, duplicate keys, causal child evidence, depth, and node budget before changing graph state.
 
-## General tools
+## Status vocabulary
 
-| Tool | Purpose |
+Every investigated node ends in exactly one Checkpoint 2 state:
+
+| Status | Meaning |
 | --- | --- |
-| `get_person_context` | Retrieves the synthetic person and event facts. |
-| `find_existing_node` | Checks runtime graph identity before creation. |
-| `spawn_investigation` | Creates guarded first-order or child investigations. |
-| `get_pending_nodes` | Exposes unresolved nodes and the empty-queue stop signal. |
-| `get_graph_snapshot` | Lets the investigator review causal structure and statuses. |
-| `investigate_domain` | Queries the replaceable evidence provider with open text. |
-| `record_consequence` | Records one terminal status with evidence and reasoning separated. |
+| `RESOLVED` | No outstanding step remains. |
+| `DOES_NOT_APPLY` | Trusted evidence defines a trigger and Alex's declared context negates it. |
+| `ACTION_PREPARED` | Ripple prepared, but did not execute, an action supported by node-bound primary evidence. |
+| `HUMAN_DECISION` | Trusted evidence establishes a genuine choice that Ripple should not make for Alex. |
+| `UNKNOWN` | Evidence, source quality, applicability facts, or orchestration output is insufficient. |
 
-## Evidence and safeguards
+Ripple never files, pays, changes insurance, submits a government action, or performs another consequential external action.
 
-`python/mock_evidence.json` is explicitly labeled controlled mock/synthetic evidence. `MockEvidenceProvider` is the replacement seam for real public sources in a future checkpoint. Every graph node contains `reason`, `model_reasoning`, `evidence`, `parent_id`, `depth`, `discovered_by`, and `spawned_consequences`.
+## Official evidence
 
-The graph store enforces maximum depth, maximum node count, normalized duplicate detection, already-investigated detection, node-bound evidence, evidence-gap coercion to `UNKNOWN`, and termination when no pending nodes remain.
+`python/official_evidence.json` is the active catalog. `python/build_official_catalog.py` reproducibly builds it from `artifacts/cp2-official-source-research.json`. The catalog contains source URL, publisher, title, retrieved timestamp, exact excerpt, research context, structured facts, limitations, deadline metadata, destination, required items, source-derived context requirements, and a content hash.
 
-## Scope
+Source quality is recomputed from URL host at load time:
 
-This build includes one user, one interstate-move event, one synthetic evidence catalog, one reasoning workflow, and one minimal web interface. It does not include authentication, email, banking, filings, payments, notifications, additional users or events, production legal data, or AgentCore deployment.
+- `PRIMARY_OFFICIAL`: allowlisted government or regulator host.
+- `AUTHORITATIVE_SECONDARY`: allowlisted institutional secondary source.
+- `UNVERIFIED`: any other host.
+- `EVIDENCE_GAP`: no usable source.
+
+A catalog-provided quality label cannot promote an untrusted host. Legal and administrative `ACTION_PREPARED` conclusions require at least one `PRIMARY_OFFICIAL` source attached to that exact node.
+
+## Run locally
+
+```bash
+cd /home/ubuntu/ripple-checkpoint-1
+sudo uv pip install --system -r python/requirements.txt
+pnpm install
+pnpm dev
+```
+
+The web server invokes the Python worker with a 179-second request timeout. The worker uses `OPENAI_API_BASE` / `OPENAI_API_KEY` in the sandbox and falls back to the managed Forge endpoint and credential in WebDev.
+
+Run the engine directly:
+
+```bash
+python3 python/ripple_engine.py \
+  --move-date 2026-10-01 \
+  --max-depth 3 \
+  --max-nodes 14
+```
+
+Rebuild and validate:
+
+```bash
+python3 python/build_official_catalog.py
+pytest -q python/test_ripple_engine.py python/test_trust_layer.py
+pnpm check
+pnpm build
+pnpm test -- --run
+python3 python/validate_result.py path/to/runtime-result.json
+```
+
+## Validation artifacts
+
+- `artifacts/checkpoint2-prior-live-runtime-graph.json` is a successful Strands-generated CP2 graph captured before the final source-applicability hardening.
+- `artifacts/checkpoint2-prior-live-validation.json` shows that graph passing all 14 current runtime acceptance checks.
+- `artifacts/CHECKPOINT_2_REPORT.md` distinguishes that prior live proof from the exact-code deterministic test results and the final live rerun blocker.
+- `artifacts/checkpoint1-mock-evidence.json` is retained only as an archive. No active runtime code imports it.
+
+## Current limitation
+
+The final exact-code live rerun could not be completed in this build session because the configured model gateway returned HTTP 412 with `usage exhausted`. The engine now fails visibly in that condition instead of returning an empty graph. All deterministic Python tests, TypeScript checks, production build, and server tests pass. The earlier CP2 live Strands run passed all current graph validations, but it predates the last source-required applicability and payload-hardening changes. See the report for the complete disclosure.
+
+Checkpoint 3 features were not started.

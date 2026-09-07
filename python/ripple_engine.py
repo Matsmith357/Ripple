@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -11,6 +12,7 @@ from dataclasses import asdict, dataclass, field
 from datetime import date
 from pathlib import Path
 from typing import Any, Literal
+from urllib.parse import urlparse
 
 from strands import Agent, tool
 from strands.models.openai import OpenAIModel
@@ -18,17 +20,35 @@ from strands.models.openai import OpenAIModel
 Status = Literal[
     "RESOLVED",
     "DOES_NOT_APPLY",
-    "ACTION_NEEDED",
+    "ACTION_PREPARED",
     "HUMAN_DECISION",
     "UNKNOWN",
 ]
 TERMINAL_STATUSES: set[str] = {
     "RESOLVED",
     "DOES_NOT_APPLY",
-    "ACTION_NEEDED",
+    "ACTION_PREPARED",
     "HUMAN_DECISION",
     "UNKNOWN",
 }
+
+
+def parse_json_array(payload: str) -> tuple[list[dict[str, Any]], bool]:
+    """Parse a model-supplied array, repairing invalid apostrophe escapes or duplicated trailing output."""
+    repaired = False
+    try:
+        parsed = json.loads(payload)
+    except json.JSONDecodeError as original_error:
+        cleaned = payload.replace("\\'", "'")
+        try:
+            parsed, end = json.JSONDecoder().raw_decode(cleaned.lstrip())
+            if cleaned.lstrip()[end:].strip() or cleaned != payload:
+                repaired = True
+        except json.JSONDecodeError:
+            raise original_error
+    if not isinstance(parsed, list) or not all(isinstance(item, dict) for item in parsed):
+        raise ValueError("Tool payload must be a JSON array of objects.")
+    return parsed, repaired
 
 DEFAULT_SCENARIO: dict[str, Any] = {
     "person": {
@@ -60,12 +80,21 @@ DEFAULT_SCENARIO: dict[str, Any] = {
 class Evidence:
     source_id: str
     source_type: str
+    source_url: str | None
     publisher: str
     title: str
     excerpt: str
     retrieved_at: str
     query: str
-    synthetic: bool = True
+    retrieval_context: str
+    supports: list[str] = field(default_factory=list)
+    limitations: str = ""
+    deadline: dict[str, Any] | None = None
+    destination: str | None = None
+    required_items: list[str] = field(default_factory=list)
+    required_context_paths: list[str] = field(default_factory=list)
+    content_sha256: str | None = None
+    synthetic: bool = False
 
 
 @dataclass
@@ -82,23 +111,62 @@ class Node:
     spawned_consequences: list[str] = field(default_factory=list)
     why_investigated: str = ""
     model_reasoning: str = ""
+    caused_by_evidence_id: str | None = None
+    applicability: dict[str, Any] = field(default_factory=dict)
+    action: dict[str, Any] = field(default_factory=dict)
+    uncertainty: list[str] = field(default_factory=list)
     created_order: int = 0
 
 
 class EvidenceProvider:
-    """Replaceable evidence interface. Checkpoint 1 uses only controlled mock records."""
+    """Replaceable retrieval interface. Checkpoint 2 uses verified official-source snapshots."""
 
-    def search(self, query: str, domain: str, limit: int = 4) -> list[Evidence]:
+    def search(self, query: str, domain: str, limit: int = 2) -> list[Evidence]:
         raise NotImplementedError
 
 
-class MockEvidenceProvider(EvidenceProvider):
+class OfficialEvidenceProvider(EvidenceProvider):
+    PRIMARY_OFFICIAL_HOSTS = {
+        "bmv.ohio.gov",
+        "www.bmv.ohio.gov",
+        "publicsafety.ohio.gov",
+        "codes.ohio.gov",
+        "www.ohiosos.gov",
+        "olvr.ohiosos.gov",
+        "www.franklincountyohio.gov",
+        "tax.ohio.gov",
+        "dam.assets.ohio.gov",
+        "www.usps.com",
+        "pe.usps.com",
+        "insurance.ohio.gov",
+        "ohio.gov",
+        "elicense.ohio.gov",
+        "education.ohio.gov",
+    }
+    AUTHORITATIVE_SECONDARY_HOSTS = {"content.naic.org"}
+
     def __init__(self, path: Path, clock: callable | None = None) -> None:
         payload = json.loads(path.read_text())
         self.catalog_version = payload["catalog_version"]
         self.label = payload["label"]
+        self.classification_policy = payload.get("classification_policy", {})
         self.documents = payload["documents"]
         self.clock = clock or (lambda: time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+        for document in self.documents:
+            digest = hashlib.sha256(document["content"].encode()).hexdigest()
+            if digest != document.get("content_sha256"):
+                raise ValueError(f"Evidence snapshot integrity check failed: {document['source_id']}")
+
+    @classmethod
+    def classify_source(cls, url: str | None) -> str:
+        if not url:
+            return "EVIDENCE_GAP"
+        host = (urlparse(url).hostname or "").lower()
+        if host in cls.PRIMARY_OFFICIAL_HOSTS:
+            return "PRIMARY_OFFICIAL"
+        if host in cls.AUTHORITATIVE_SECONDARY_HOSTS:
+            return "AUTHORITATIVE_SECONDARY"
+        return "UNVERIFIED"
 
     @staticmethod
     def _tokens(value: str) -> set[str]:
@@ -125,14 +193,20 @@ class MockEvidenceProvider(EvidenceProvider):
             "update",
             "within",
         }
-        aliases = {"dmv": "bmv", "licensing": "license", "licenses": "license"}
+        aliases = {
+            "automobile": "auto",
+            "dmv": "bmv",
+            "insurer": "insurance",
+            "licensing": "license",
+            "licenses": "license",
+        }
         return {
             aliases.get(token, token)
             for token in re.findall(r"[a-z0-9]+", value.lower())
             if len(token) > 2 and token not in low_information
         }
 
-    def search(self, query: str, domain: str, limit: int = 4) -> list[Evidence]:
+    def search(self, query: str, domain: str, limit: int = 2) -> list[Evidence]:
         query_tokens = self._tokens(f"{query} {domain}")
         domain_tokens = self._tokens(domain)
         ranked: list[tuple[int, dict[str, Any]]] = []
@@ -146,10 +220,11 @@ class MockEvidenceProvider(EvidenceProvider):
                 ]
             )
             document_tokens = self._tokens(searchable)
+            direct_tokens = self._tokens(f"{document['title']} {document['content']}")
             document_domain_tokens = self._tokens(
                 f"{' '.join(document['domains'])} {document['title']}"
             )
-            score = len(query_tokens & document_tokens)
+            score = len(query_tokens & document_tokens) + (2 * len(query_tokens & direct_tokens))
             domain_relevant = any(
                 left == right or left.startswith(right) or right.startswith(left)
                 for left in domain_tokens
@@ -162,13 +237,22 @@ class MockEvidenceProvider(EvidenceProvider):
         return [
             Evidence(
                 source_id=document["source_id"],
-                source_type=document["source_type"],
+                source_type=self.classify_source(document.get("source_url")),
+                source_url=document.get("source_url"),
                 publisher=document["publisher"],
                 title=document["title"],
-                excerpt=document["content"],
-                retrieved_at=self.clock(),
+                excerpt=document["content"][:1400],
+                retrieved_at=document["retrieved_at"],
                 query=query,
-                synthetic=True,
+                retrieval_context=document["retrieval_context"],
+                supports=document.get("supports", []),
+                limitations=document.get("limitations", ""),
+                deadline=document.get("deadline"),
+                destination=document.get("destination"),
+                required_items=document.get("required_items", []),
+                required_context_paths=document.get("required_context_paths", []),
+                content_sha256=document.get("content_sha256"),
+                synthetic=False,
             )
             for _, document in ranked[:limit]
         ]
@@ -186,6 +270,7 @@ class InvestigationStore:
         self.evidence_provider = evidence_provider
         self.max_depth = max_depth
         self.max_nodes = max_nodes
+        self.configured_max_nodes = max_nodes
         self.run_id = f"run_{uuid.uuid4().hex[:10]}"
         self.activity: list[dict[str, Any]] = []
         self.nodes: dict[str, Node] = {}
@@ -199,6 +284,13 @@ class InvestigationStore:
             "max_depth_blocks": 0,
             "max_nodes_blocks": 0,
             "missing_evidence_coercions": 0,
+            "weak_evidence_coercions": 0,
+            "applicability_coercions": 0,
+            "deadline_coercions": 0,
+            "unsupported_action_coercions": 0,
+            "human_decision_coercions": 0,
+            "tool_payload_repairs": 0,
+            "tool_payload_rejections": 0,
             "stop_reason": None,
         }
         root = Node(
@@ -216,17 +308,47 @@ class InvestigationStore:
                 {
                     "source_id": "SYNTHETIC-EVENT-001",
                     "source_type": "SYNTHETIC_SCENARIO",
+                    "source_url": None,
                     "publisher": "Ripple demo input",
-                    "title": "Configured interstate move",
-                    "excerpt": json.dumps(scenario["event"], sort_keys=True),
+                    "title": "Configured Alex Morgan move event",
+                    "excerpt": f"{scenario['event']['from_city']}, {scenario['event']['from_state']} to {scenario['event']['to_city']}, {scenario['event']['to_state']} on {scenario['event']['move_date']}",
                     "retrieved_at": self._now(),
-                    "query": "initial event",
+                    "query": "root event",
+                    "retrieval_context": "User-configured synthetic scenario input, not a public source.",
+                    "supports": ["The move event that begins the investigation."],
+                    "limitations": "Synthetic person and event context; not legal or administrative evidence.",
+                    "deadline": None,
+                    "destination": None,
+                    "required_items": [],
+                    "content_sha256": None,
                     "synthetic": True,
                 }
             ],
             discovered_by="configured event input",
             why_investigated="Root event supplied to Ripple.",
             model_reasoning="No inference: this node records the supplied event.",
+            caused_by_evidence_id=None,
+            applicability={
+                "rule": "Configured event input",
+                "why_applies": "Alex's configured move is the investigation trigger.",
+                "trigger_facts": ["event.from_state", "event.to_state", "event.move_date"],
+                "resolved_facts": {
+                    "event.from_state": scenario["event"]["from_state"],
+                    "event.to_state": scenario["event"]["to_state"],
+                    "event.move_date": scenario["event"]["move_date"],
+                },
+            },
+            action={
+                "what": "Investigate the consequences of the configured interstate move.",
+                "why": "This is the supplied root event.",
+                "when": scenario["event"]["move_date"],
+                "deadline_source_id": "SYNTHETIC-EVENT-001",
+                "where": "Ripple investigation engine",
+                "need": ["Configured move", "Synthetic person context"],
+                "depends_on": None,
+                "status": "RESOLVED",
+            },
+            uncertainty=[],
             created_order=self._next_sequence(),
         )
         self.nodes[root.id] = root
@@ -246,6 +368,17 @@ class InvestigationStore:
         terms = re.findall(r"[a-z0-9]+", f"{domain} {title}".lower())
         ignored = {"a", "an", "and", "for", "in", "of", "on", "the", "to", "with"}
         return " ".join(term for term in terms if term not in ignored)
+
+    def resolve_context_fact(self, path: str) -> tuple[bool, Any]:
+        parts = path.split(".")
+        if not parts or parts[0] not in {"person", "event"}:
+            return False, None
+        value: Any = self.scenario
+        for part in parts:
+            if not isinstance(value, dict) or part not in value:
+                return False, None
+            value = value[part]
+        return True, value
 
     def log(self, actor: str, kind: str, message: str, node_id: str | None = None) -> None:
         self.activity.append(
@@ -328,8 +461,8 @@ class InvestigationStore:
                     parent_id,
                 )
                 return {"accepted": False, "reason": "child_evidence_missing"}
-            child_terms = MockEvidenceProvider._tokens(f"{title} {domain}")
-            evidence_terms = MockEvidenceProvider._tokens(f"{evidence.title} {evidence.excerpt}")
+            child_terms = OfficialEvidenceProvider._tokens(f"{title} {domain}")
+            evidence_terms = OfficialEvidenceProvider._tokens(f"{evidence.title} {evidence.excerpt}")
             if len(child_terms & evidence_terms) < 2:
                 self.log(
                     "guard",
@@ -355,6 +488,7 @@ class InvestigationStore:
             discovered_by=discovered_by,
             why_investigated=why,
             model_reasoning="",
+            caused_by_evidence_id=caused_by_evidence_id,
             created_order=self.sequence,
         )
         self.nodes[node_id] = node
@@ -372,15 +506,17 @@ class InvestigationStore:
             gap = Evidence(
                 source_id=f"EVIDENCE-GAP-{uuid.uuid4().hex[:8]}",
                 source_type="EVIDENCE_GAP",
+                source_url=None,
                 publisher="Ripple evidence guard",
-                title="No controlled evidence matched the query",
+                title="No trustworthy evidence matched the query",
                 excerpt=(
-                    "The controlled Checkpoint 1 evidence catalog returned no matching source. "
+                    "The verified Checkpoint 2 evidence catalog returned no matching source. "
                     "The consequence must remain UNKNOWN unless another retrieved source resolves it."
                 ),
                 retrieved_at=self._now(),
                 query=query,
-                synthetic=True,
+                retrieval_context="Deterministic evidence-provider gap generated for this query.",
+                synthetic=False,
             )
             results = [gap]
         for item in results:
@@ -389,13 +525,30 @@ class InvestigationStore:
         self.log(
             "tool",
             "evidence_retrieved",
-            f"Retrieved {len(results)} controlled source(s) for '{node.title}'.",
+            f"Retrieved {len(results)} verified source(s) for '{node.title}'.",
             node_id,
         )
         return {
             "ok": True,
-            "evidence_label": "CONTROLLED MOCK/SYNTHETIC EVIDENCE",
-            "results": [asdict(item) for item in results],
+            "evidence_label": "VERIFIED PUBLIC EVIDENCE",
+            "results": [
+                {
+                    "source_id": item.source_id,
+                    "source_type": item.source_type,
+                    "source_url": item.source_url,
+                    "publisher": item.publisher,
+                    "title": item.title,
+                    "excerpt": item.excerpt,
+                    "retrieved_at": item.retrieved_at,
+                    "retrieval_context": item.retrieval_context,
+                    "limitations": item.limitations[:500],
+                    "deadline": item.deadline,
+                    "destination": item.destination,
+                    "required_items": item.required_items,
+                    "required_context_paths": item.required_context_paths,
+                }
+                for item in results
+            ],
         }
 
     def record(
@@ -405,6 +558,9 @@ class InvestigationStore:
         reason: str,
         evidence_ids: list[str],
         model_reasoning: str,
+        action: dict[str, Any] | None = None,
+        applicability: dict[str, Any] | None = None,
+        uncertainty: list[str] | None = None,
     ) -> dict[str, Any]:
         node = self.nodes.get(node_id)
         if not node:
@@ -418,6 +574,8 @@ class InvestigationStore:
                 node_id,
             )
             return {"ok": False, "reason": "already_investigated", "status": node.status}
+        if status == "ACTION_NEEDED":
+            status = "ACTION_PREPARED"
         if status not in TERMINAL_STATUSES:
             status = "UNKNOWN"
             reason = f"Invalid requested status was guarded. {reason}".strip()
@@ -435,6 +593,7 @@ class InvestigationStore:
                     Evidence(
                         source_id=f"EVIDENCE-GAP-{uuid.uuid4().hex[:8]}",
                         source_type="EVIDENCE_GAP",
+                        source_url=None,
                         publisher="Ripple evidence guard",
                         title="Conclusion lacked retrieved evidence",
                         excerpt=(
@@ -443,17 +602,162 @@ class InvestigationStore:
                         ),
                         retrieved_at=self._now(),
                         query=node.title,
-                        synthetic=True,
+                        retrieval_context="Deterministic conclusion guard generated after missing node-bound evidence.",
+                        synthetic=False,
                     )
                 )
             ]
             reason = f"Insufficient retrieved evidence. {reason}".strip()
         if any(item["source_type"] == "EVIDENCE_GAP" for item in evidence):
             status = "UNKNOWN"
+
+        primary_ids = {
+            item["source_id"] for item in evidence if item["source_type"] == "PRIMARY_OFFICIAL"
+        }
+        trusted_ids = {
+            item["source_id"]
+            for item in evidence
+            if item["source_type"] in {"PRIMARY_OFFICIAL", "AUTHORITATIVE_SECONDARY"}
+        }
+        applicability = applicability or {}
+        evidence_required_paths = [
+            path
+            for item in evidence
+            for path in item.get("required_context_paths", [])
+        ]
+        trigger_facts = list(
+            dict.fromkeys(
+                [str(path) for path in applicability.get("trigger_facts", [])]
+                + [str(path) for path in evidence_required_paths]
+            )
+        )
+        resolved_facts: dict[str, Any] = {}
+        unresolved_facts: list[str] = []
+        for path in trigger_facts:
+            found, value = self.resolve_context_fact(path)
+            if found:
+                resolved_facts[path] = value
+            else:
+                unresolved_facts.append(path)
+        applicability_record = {
+            "rule": str(applicability.get("rule", "")).strip(),
+            "why_applies": str(applicability.get("why_applies", reason)).strip(),
+            "trigger_facts": trigger_facts,
+            "resolved_facts": resolved_facts,
+            "unresolved_facts": unresolved_facts,
+        }
+
+        action = action or {}
+        action_what = str(action.get("what", "")).strip()
+        requested_when = str(action.get("when", "UNKNOWN")).strip() or "UNKNOWN"
+        deadline_source_id = str(action.get("deadline_source_id", "")).strip() or None
+        supported_when = "UNKNOWN"
+        if requested_when.upper() != "UNKNOWN":
+            source = self.retrieved_evidence.get(deadline_source_id or "")
+            if (
+                source
+                and source.source_id in self.node_evidence_ids.get(node_id, set())
+                and source.source_type in {"PRIMARY_OFFICIAL", "AUTHORITATIVE_SECONDARY"}
+                and source.deadline
+            ):
+                supported_when = str(source.deadline.get("text", "UNKNOWN"))
+            else:
+                self.safeguards["deadline_coercions"] += 1
+        destination = next(
+            (item["destination"] for item in evidence if item.get("destination")),
+            "UNKNOWN",
+        )
+        evidence_needs = sorted(
+            {
+                requirement
+                for item in evidence
+                for requirement in item.get("required_items", [])
+                if requirement
+            }
+        )
+        depends_on = (
+            self.nodes[node.parent_id].title
+            if node.parent_id and node.parent_id != "root_move"
+            else (str(action.get("depends_on", "")).strip() or None)
+        )
+
+        if status == "ACTION_PREPARED":
+            action_terms = OfficialEvidenceProvider._tokens(action_what)
+            rule_terms = OfficialEvidenceProvider._tokens(applicability_record["rule"])
+            evidence_terms = OfficialEvidenceProvider._tokens(
+                " ".join(f"{item['title']} {item['excerpt']}" for item in evidence)
+            )
+            if not primary_ids:
+                self.safeguards["weak_evidence_coercions"] += 1
+                status = "UNKNOWN"
+                reason = f"A prepared legal or administrative action requires PRIMARY_OFFICIAL evidence. {reason}".strip()
+            elif (
+                not trigger_facts
+                or unresolved_facts
+                or any(resolved_facts.get(path) in {False, None, ""} for path in evidence_required_paths)
+            ):
+                self.safeguards["applicability_coercions"] += 1
+                status = "UNKNOWN"
+                reason = f"Alex-specific applicability was not fully established from declared context facts. {reason}".strip()
+            elif not applicability_record["rule"] or len(rule_terms & evidence_terms) < 2:
+                self.safeguards["applicability_coercions"] += 1
+                status = "UNKNOWN"
+                reason = f"The asserted rule was not sufficiently grounded in the retrieved evidence text. {reason}".strip()
+            elif not action_what or len(action_terms & evidence_terms) < 2:
+                self.safeguards["unsupported_action_coercions"] += 1
+                status = "UNKNOWN"
+                reason = f"The proposed action was not sufficiently supported by the retrieved evidence text. {reason}".strip()
+
+        has_negated_trigger = any(value is False or value is None for value in resolved_facts.values())
+        if status == "RESOLVED" and trusted_ids and trigger_facts and not unresolved_facts and has_negated_trigger:
+            status = "DOES_NOT_APPLY"
+
+        if status == "DOES_NOT_APPLY":
+            rule_terms = OfficialEvidenceProvider._tokens(applicability_record["rule"])
+            evidence_terms = OfficialEvidenceProvider._tokens(
+                " ".join(f"{item['title']} {item['excerpt']}" for item in evidence)
+            )
+            if (
+                not trusted_ids
+                or not trigger_facts
+                or unresolved_facts
+                or not has_negated_trigger
+                or len(rule_terms & evidence_terms) < 2
+            ):
+                self.safeguards["applicability_coercions"] += 1
+                status = "UNKNOWN"
+                reason = f"The applicability trigger was not authoritatively negated by Alex's context. {reason}".strip()
+
+        decision_options = [str(item).strip() for item in action.get("decision_options", []) if str(item).strip()]
+        if status == "HUMAN_DECISION" and (not primary_ids or len(decision_options) < 2):
+            self.safeguards["human_decision_coercions"] += 1
+            status = "UNKNOWN"
+            reason = f"A genuine evidence-backed choice was not established. {reason}".strip()
+
+        uncertainty_values = [str(item).strip() for item in (uncertainty or []) if str(item).strip()]
+        uncertainty_values.extend(
+            item["limitations"] for item in evidence if item.get("limitations")
+        )
+        if status == "UNKNOWN" and not uncertainty_values:
+            uncertainty_values.append("Sufficient trustworthy evidence or Alex-specific facts were not established.")
+
         node.status = status
         node.reason = reason.strip() or "No reason supplied; treated as unresolved."
         node.evidence = evidence
         node.model_reasoning = model_reasoning.strip() or node.reason
+        node.applicability = applicability_record
+        node.action = {
+            "what": action_what if status in {"ACTION_PREPARED", "HUMAN_DECISION"} else "No action prepared.",
+            "why": applicability_record["why_applies"] or node.reason,
+            "when": supported_when,
+            "deadline_source_id": deadline_source_id if supported_when != "UNKNOWN" else None,
+            "where": destination,
+            "need": evidence_needs,
+            "depends_on": depends_on,
+            "decision_options": decision_options,
+            "status": status,
+        }
+        node.uncertainty = list(dict.fromkeys(uncertainty_values))
         self.log("agent", "consequence_recorded", f"{node.title} → {node.status}", node_id)
         return {"ok": True, "node_id": node_id, "status": node.status}
 
@@ -470,14 +774,17 @@ class InvestigationStore:
         gap = Evidence(
             source_id=f"EVIDENCE-GAP-{uuid.uuid4().hex[:8]}",
             source_type="EVIDENCE_GAP",
+            source_url=None,
             publisher="Ripple engine guard",
             title="Investigation ended without an evidence-backed conclusion",
             excerpt=reason,
             retrieved_at=self._now(),
             query=node.title,
-            synthetic=True,
+            retrieval_context="Deterministic stop guard generated after orchestration interruption.",
+            synthetic=False,
         )
         self.retrieved_evidence[gap.source_id] = gap
+        self.node_evidence_ids.setdefault(node_id, set()).add(gap.source_id)
         self.record(node_id, "UNKNOWN", reason, [gap.source_id], reason)
 
     def result(self, model_id: str, strands_metrics: list[dict[str, Any]]) -> dict[str, Any]:
@@ -488,14 +795,20 @@ class InvestigationStore:
             if node.parent_id is not None
         ]
         return {
-            "checkpoint": 1,
+            "checkpoint": 2,
             "run_id": self.run_id,
             "generated_at": self._now(),
             "generated_at_runtime": True,
             "engine": "Strands Agents SDK",
             "model": model_id,
-            "evidence_mode": "CONTROLLED MOCK/SYNTHETIC",
+            "evidence_mode": "VERIFIED PUBLIC SOURCES",
+            "evidence_catalog": {
+                "version": self.evidence_provider.catalog_version,
+                "label": self.evidence_provider.label,
+                "classification_policy": self.evidence_provider.classification_policy,
+            },
             "scenario": self.scenario,
+            "guardrail_config": {"max_depth": self.max_depth, "max_nodes": self.configured_max_nodes},
             "graph": {"root_id": "root_move", "nodes": [asdict(node) for node in ordered], "edges": edges},
             "activity": self.activity,
             "safeguards": self.safeguards,
@@ -516,7 +829,7 @@ class RippleEngine:
         self.max_depth = max_depth
         self.max_nodes = max_nodes
         self.model_id = model_id
-        self.evidence_path = evidence_path or Path(__file__).with_name("mock_evidence.json")
+        self.evidence_path = evidence_path or Path(__file__).with_name("official_evidence.json")
 
     def _model(self) -> OpenAIModel:
         api_key = os.getenv("BUILT_IN_FORGE_API_KEY") or os.getenv("OPENAI_API_KEY")
@@ -526,14 +839,21 @@ class RippleEngine:
         normalized_url = base_url.rstrip("/")
         if not normalized_url.endswith("/v1"):
             normalized_url = f"{normalized_url}/v1"
+        if self.model_id.startswith("gemini-"):
+            params: dict[str, Any] = {"max_tokens": 5000}
+        elif self.model_id.startswith("claude-"):
+            params = {"max_tokens": 5000}
+        else:
+            completion_limit = 3500 if self.model_id == "gpt-5-nano" else 5000
+            params = {
+                "max_completion_tokens": completion_limit,
+                "extra_body": {"reasoning": {"effort": "low"}},
+            }
         return OpenAIModel(
             client_args={"api_key": api_key, "base_url": normalized_url},
             model_id=self.model_id,
             stream=False,
-            params={
-                "max_completion_tokens": 5000,
-                "extra_body": {"reasoning": {"effort": "low"}},
-            },
+            params=params,
         )
 
     @staticmethod
@@ -545,7 +865,7 @@ class RippleEngine:
         return {"phase": phase, "node_id": node_id, "summary": summary}
 
     def run(self) -> dict[str, Any]:
-        provider = MockEvidenceProvider(self.evidence_path)
+        provider = OfficialEvidenceProvider(self.evidence_path)
         store = InvestigationStore(
             scenario=self.scenario,
             evidence_provider=provider,
@@ -553,6 +873,40 @@ class RippleEngine:
             max_nodes=self.max_nodes,
         )
         metrics: list[dict[str, Any]] = []
+        orchestrator_failure: str | None = None
+
+        def invoke_with_retry(agent: Agent, prompt: str, phase: str) -> Any:
+            for attempt in range(2):
+                try:
+                    return agent(prompt)
+                except Exception as exc:
+                    if attempt == 1:
+                        raise
+                    store.log(
+                        "engine",
+                        "agent_retry",
+                        f"Retrying {phase} after transient {type(exc).__name__}: {str(exc)[:180]}",
+                        "root_move",
+                    )
+                    time.sleep(2)
+            raise RuntimeError(f"{phase} did not return")
+
+        def decode_batch(payload: str, tool_name: str) -> tuple[list[dict[str, Any]] | None, dict[str, Any] | None]:
+            try:
+                items, repaired = parse_json_array(payload)
+            except (json.JSONDecodeError, ValueError) as exc:
+                store.safeguards["tool_payload_rejections"] += 1
+                store.log("guard", "tool_payload_rejected", f"{tool_name}: {exc}", "root_move")
+                return None, {"ok": False, "reason": "invalid_json_array", "tool": tool_name}
+            if repaired:
+                store.safeguards["tool_payload_repairs"] += 1
+                store.log(
+                    "guard",
+                    "tool_payload_repaired",
+                    f"{tool_name}: repaired an invalid apostrophe escape before parsing.",
+                    "root_move",
+                )
+            return items, None
 
         @tool
         def get_person_context() -> dict[str, Any]:
@@ -563,12 +917,16 @@ class RippleEngine:
                 "source_id": "SYNTHETIC-PERSON-001",
                 "person": store.scenario["person"],
                 "event": store.scenario["event"],
+                "pending_nodes": [asdict(node) for node in store.pending_nodes()],
             }
 
         @tool
         def investigate_domain(requests_json: str) -> dict[str, Any]:
-            """Search controlled evidence for up to twelve nodes. Pass a JSON array of objects with node_id, domain, and query. This is the only external-rule evidence source."""
-            requests = json.loads(requests_json)
+            """Retrieve verified public evidence for up to twelve nodes. Pass a JSON array with node_id, domain, and query. This is the only external-rule evidence source."""
+            requests, error = decode_batch(requests_json, "investigate_domain")
+            if error:
+                return error
+            assert requests is not None
             return {
                 "results": [
                     {
@@ -586,7 +944,10 @@ class RippleEngine:
         @tool
         def find_existing_node(candidates_json: str) -> dict[str, Any]:
             """Check up to twelve candidates against the runtime graph. Pass a JSON array of objects with title and domain."""
-            candidates = json.loads(candidates_json)
+            candidates, error = decode_batch(candidates_json, "find_existing_node")
+            if error:
+                return error
+            assert candidates is not None
             results = []
             for candidate in candidates[:12]:
                 title = candidate.get("title", "")
@@ -611,7 +972,10 @@ class RippleEngine:
         @tool
         def spawn_investigation(candidates_json: str) -> dict[str, Any]:
             """Create up to twelve runtime nodes. Pass a JSON array with title, domain, parent_id, why, and caused_by_evidence_id for every non-root child. Guardrails validate every item."""
-            candidates = json.loads(candidates_json)
+            candidates, error = decode_batch(candidates_json, "spawn_investigation")
+            if error:
+                return error
+            assert candidates is not None
             return {
                 "results": [
                     {
@@ -631,20 +995,50 @@ class RippleEngine:
 
         @tool
         def record_consequence(conclusions_json: str) -> dict[str, Any]:
-            """Record up to twelve conclusions. Pass a JSON array of objects with node_id, status, reason, evidence_ids, and model_reasoning. Missing or gap evidence becomes UNKNOWN."""
-            conclusions = json.loads(conclusions_json)
-            return {
-                "results": [
-                    store.record(
-                        node_id=str(conclusion.get("node_id", "")),
-                        status=str(conclusion.get("status", "UNKNOWN")),
-                        reason=str(conclusion.get("reason", "")),
-                        evidence_ids=[str(item) for item in conclusion.get("evidence_ids", [])],
-                        model_reasoning=str(conclusion.get("model_reasoning", "")),
-                    )
-                    for conclusion in conclusions[:12]
+            """Record conclusions and evidence-backed children. Each JSON object needs node_id, status, reason, evidence_ids, model_reasoning, applicability, action, uncertainty, and spawned_consequences. Trust guards validate both conclusions and children."""
+            conclusions, error = decode_batch(conclusions_json, "record_consequence")
+            if error:
+                return error
+            assert conclusions is not None
+            results = []
+            accepted_child = False
+            for conclusion in conclusions[:12]:
+                node_id = str(conclusion.get("node_id", ""))
+                raw_evidence_ids = conclusion.get("evidence_ids", []) or conclusion.get("evidence", [])
+                evidence_ids = [
+                    str(item.get("source_id", "")) if isinstance(item, dict) else str(item)
+                    for item in raw_evidence_ids
                 ]
-            }
+                if not any(evidence_ids) and store.node_evidence_ids.get(node_id):
+                    evidence_ids = sorted(store.node_evidence_ids[node_id])
+                recorded = store.record(
+                    node_id=node_id,
+                    status=str(conclusion.get("status", "UNKNOWN")),
+                    reason=str(conclusion.get("reason", "")),
+                    evidence_ids=evidence_ids,
+                    model_reasoning=str(conclusion.get("model_reasoning", "")),
+                    applicability=conclusion.get("applicability"),
+                    action=conclusion.get("action"),
+                    uncertainty=conclusion.get("uncertainty"),
+                )
+                spawned = []
+                if recorded.get("ok") and not accepted_child:
+                    for child in conclusion.get("spawned_consequences", [])[:3]:
+                        child_result = store.spawn(
+                            title=str(child.get("title", "")),
+                            domain=str(child.get("domain", "")),
+                            parent_id=node_id,
+                            why=str(child.get("why", "")),
+                            discovered_by="Strands model reasoning via record_consequence",
+                            caused_by_evidence_id=child.get("caused_by_evidence_id"),
+                        )
+                        spawned.append(child_result)
+                        if child_result.get("accepted"):
+                            accepted_child = True
+                            break
+                results.append({**recorded, "spawned": spawned})
+            pending = [asdict(node) for node in store.pending_nodes()]
+            return {"results": results, "pending_nodes": pending, "pending_count": len(pending)}
 
         @tool
         def get_pending_nodes() -> dict[str, Any]:
@@ -661,14 +1055,35 @@ class RippleEngine:
         @tool
         def get_graph_snapshot() -> dict[str, Any]:
             """Inspect the current runtime graph, including statuses, evidence, causal parents, and spawned children."""
-            nodes = [asdict(node) for node in sorted(store.nodes.values(), key=lambda item: item.created_order)]
+            nodes = [
+                {
+                    "id": node.id,
+                    "title": node.title,
+                    "domain": node.domain,
+                    "parent_id": node.parent_id,
+                    "depth": node.depth,
+                    "status": node.status,
+                    "caused_by_evidence_id": node.caused_by_evidence_id,
+                    "spawned_consequences": node.spawned_consequences,
+                    "evidence": [
+                        {
+                            "source_id": item["source_id"],
+                            "source_type": item["source_type"],
+                            "title": item["title"],
+                            "excerpt": item["excerpt"][:700],
+                        }
+                        for item in node.evidence
+                    ],
+                }
+                for node in sorted(store.nodes.values(), key=lambda item: item.created_order)
+            ]
             store.log("tool", "graph_reviewed", f"Reviewed {len(nodes)} runtime graph node(s).", "root_move")
             return {"nodes": nodes, "safeguards": store.safeguards}
 
         discovery_prompt = """
 You are Ripple's first-order consequence discovery planner. There is no predefined consequence checklist.
 
-Call get_person_context. Reason broadly from only that event and context. Create a compact set of 6–9 materially plausible direct consequence candidates across at least five distinct topical domains. Pass the full candidate JSON array to find_existing_node once, then pass only absent candidates as a JSON array to spawn_investigation once with parent_id root_move.
+Call get_person_context. Reason broadly from only that event and context. Create a compact set of 6–7 materially plausible direct consequence candidates across at least five distinct topical domains. Pass the full candidate JSON array to spawn_investigation once with parent_id root_move. That tool performs deterministic duplicate checking before every insert.
 
 At least one candidate should test applicability of a context attribute that is explicitly false or absent, so later investigation can record DOES_NOT_APPLY when supported. At least one candidate should expose a material uncertainty rather than silently omitting it. These are reasoning categories, not named consequences.
 
@@ -678,7 +1093,6 @@ Do not investigate or conclude nodes in this phase. Do not create prerequisites 
             model=self._model(),
             tools=[
                 get_person_context,
-                find_existing_node,
                 spawn_investigation,
             ],
             system_prompt=discovery_prompt,
@@ -686,9 +1100,11 @@ Do not investigate or conclude nodes in this phase. Do not create prerequisites 
             name="Ripple Discovery Planner",
         )
         try:
-            discovery_result = discovery_agent(
+            discovery_result = invoke_with_retry(
+                discovery_agent,
                 f"Discover direct consequences of {store.nodes['root_move'].title}; configured move date "
-                f"{self.scenario['event']['move_date']}."
+                f"{self.scenario['event']['move_date']}.",
+                "discovery",
             )
             metrics.append(self._metric_summary(discovery_result, "discovery"))
             store.log(
@@ -701,31 +1117,35 @@ Do not investigate or conclude nodes in this phase. Do not create prerequisites 
             investigation_prompt = f"""
 You are Ripple's recursive consequence investigator. Work only on nodes already present in the runtime graph or children that retrieved evidence causes.
 
-Call get_person_context, then repeat this loop until get_pending_nodes returns zero:
-1. Get pending nodes.
-2. Submit one investigate_domain call whose requests_json is a JSON array covering every pending node, with a focused open-text query for each. Only retrieved tool evidence may support a requirement.
-3. Submit one record_consequence call whose conclusions_json is a JSON array with exactly one conclusion per pending node. Use ACTION_NEEDED only for the narrow step explicitly stated in a retrieved excerpt; remove any bundled deadline, cancellation, minimum, filing, test, document, or other detail that the excerpt does not state. Use DOES_NOT_APPLY when both a retrieved applicability rule and context negate the trigger; HUMAN_DECISION for a genuine preference or judgment; UNKNOWN for missing facts or evidence gaps; and RESOLVED only when no outstanding step remains.
-4. Inspect retrieved evidence for distinct material prerequisites or follow-ons. If present, batch-check them using candidates_json in find_existing_node, then batch-create absent children using candidates_json in spawn_investigation beneath each causal node, never beneath root_move. Every child candidate must include caused_by_evidence_id naming the source retrieved for its parent that explicitly supports the child's claim. Investigate accepted children in the next loop.
+Call get_person_context exactly once; its response includes pending_nodes. Repeat this loop until record_consequence returns pending_count zero:
+1. Submit one investigate_domain call whose requests_json is a JSON array covering every pending node, with a focused open-text query for each. Only retrieved tool evidence may support a requirement.
+2. Submit one record_consequence call whose conclusions_json is a JSON array with exactly one conclusion per pending node. Each conclusion must contain:
+   - status: one of RESOLVED, DOES_NOT_APPLY, ACTION_PREPARED, HUMAN_DECISION, UNKNOWN.
+   - reason, evidence_ids (source_id values from investigate_domain for that exact node), and model_reasoning. Never cite another node's source.
+   - applicability: {{"rule":"rule stated by the evidence","why_applies":"why this rule applies to Alex","trigger_facts":["person.or.event.fact.paths"]}}. Use only paths returned by get_person_context.
+   - action: {{"what":"narrow prepared step","when":"supported deadline text or UNKNOWN","deadline_source_id":"source id or null","where":"authoritative destination","depends_on":"prerequisite or null","decision_options":[]}}.
+   - uncertainty: a list of every unresolved condition, missing fact, or source limitation.
+   - spawned_consequences: a JSON array of distinct material prerequisites or follow-ons stated explicitly by the retrieved evidence. Each child needs title, domain, why, and caused_by_evidence_id. Use [] when none applies.
+   Use ACTION_PREPARED only for the narrow step explicitly stated in PRIMARY_OFFICIAL evidence and supported by resolved Alex-specific trigger facts. Remove any bundled deadline, cancellation, minimum, filing, test, document, or detail that the excerpt does not state. Use DOES_NOT_APPLY when trusted evidence defines the trigger and Alex's declared context negates it. Use HUMAN_DECISION only when PRIMARY_OFFICIAL evidence establishes a genuine choice and provide at least two decision_options. Use UNKNOWN for missing facts, weak evidence, or evidence gaps; and RESOLVED only when no outstanding step remains.
+3. Before record_consequence, inspect each node's retrieved evidence for a distinct material prerequisite or follow-on. Put any such child in that conclusion's spawned_consequences array. The tool accepts at most one material child per batch and applies duplicate, depth, node-budget, and parent-bound evidence guards. Its response includes the next pending_nodes list. Investigate an accepted child in the next loop. Do not call get_pending_nodes or get_graph_snapshot during this primary pass unless a tool response is malformed.
 
-Safeguards are enforced by tools: maximum depth {self.max_depth}, maximum nodes {self.max_nodes}, duplicate and already-investigated detection, evidence-required conclusions, and empty-queue stopping. Keep evidence separate from model_reasoning. Do not invent deadlines, rules, person facts, or children unsupported by retrieved evidence.
+Safeguards are enforced by tools: maximum depth {self.max_depth}, maximum nodes {self.max_nodes}, duplicate and already-investigated detection, PRIMARY_OFFICIAL evidence for prepared administrative actions, node-bound evidence, source-backed deadlines, context-path applicability, evidence-grounded children, and empty-queue stopping. Keep retrieved evidence separate from model_reasoning. Do not invent deadlines, rules, person facts, documents, destinations, choices, or children unsupported by retrieved evidence.
 """
             investigator = Agent(
                 model=self._model(),
                 tools=[
                     get_person_context,
-                    get_pending_nodes,
-                    get_graph_snapshot,
                     investigate_domain,
                     record_consequence,
-                    find_existing_node,
-                    spawn_investigation,
                 ],
                 system_prompt=investigation_prompt,
                 callback_handler=None,
                 name="Ripple Recursive Investigator",
             )
-            investigation_result = investigator(
-                "Investigate the runtime graph. Follow the evidence recursively and finish with an empty pending queue."
+            investigation_result = invoke_with_retry(
+                investigator,
+                "Investigate the runtime graph. Follow the evidence recursively and finish with an empty pending queue.",
+                "recursive investigation",
             )
             metrics.append(self._metric_summary(investigation_result, "recursive_investigation"))
 
@@ -745,7 +1165,7 @@ Safeguards are enforced by tools: maximum depth {self.max_depth}, maximum nodes 
                     coverage_allowance += 1
                     coverage_requests.append(
                         "Create at most one still-material consequence whose controlling fact or source is absent from the "
-                        "controlled layer; investigate it and preserve the evidence gap as UNKNOWN."
+                        "verified source catalog; investigate it and preserve the evidence gap as UNKNOWN."
                     )
                 if not has_not_applicable:
                     coverage_allowance += 1
@@ -753,15 +1173,47 @@ Safeguards are enforced by tools: maximum depth {self.max_depth}, maximum nodes 
                         "Create at most one plausible context-negative candidate; if the retrieved applicability "
                         "rule and person context negate it, record DOES_NOT_APPLY."
                     )
+                configured_budget = store.max_nodes
                 store.max_nodes = min(store.max_nodes, len(store.nodes) + coverage_allowance)
-                coverage_result = investigator(
-                    "Run a graph coverage review using get_graph_snapshot. "
-                    + " ".join(coverage_requests)
-                    + " Create no other nodes. Do not invent a requirement merely to satisfy coverage. Finish only when get_pending_nodes is empty."
-                )
+                try:
+                    coverage_agent = Agent(
+                        model=self._model(),
+                        tools=[
+                            get_person_context,
+                            get_pending_nodes,
+                            get_graph_snapshot,
+                            investigate_domain,
+                            record_consequence,
+                            find_existing_node,
+                            spawn_investigation,
+                        ],
+                        system_prompt=investigation_prompt,
+                        callback_handler=None,
+                        name="Ripple Coverage Reviewer",
+                    )
+                    coverage_result = invoke_with_retry(
+                        coverage_agent,
+                        "Run a graph coverage review using get_graph_snapshot. "
+                        + " ".join(coverage_requests)
+                        + " Create no other nodes. Do not invent a requirement merely to satisfy coverage. Finish only when get_pending_nodes is empty.",
+                        "coverage review",
+                    )
+                finally:
+                    store.max_nodes = configured_budget
                 metrics.append(self._metric_summary(coverage_result, "coverage_review"))
         except Exception as exc:
-            store.log("engine", "agent_error", f"Orchestrator error: {type(exc).__name__}", "root_move")
+            orchestrator_failure = f"{type(exc).__name__}: {str(exc)[:240]}"
+            store.log(
+                "engine",
+                "agent_error",
+                f"Orchestrator error: {type(exc).__name__}: {str(exc)[:240]}",
+                "root_move",
+            )
+
+        if len(store.nodes) == 1:
+            raise RuntimeError(
+                f"Strands discovery did not produce any consequence nodes. {orchestrator_failure or ''}".strip()
+            )
 
         for node in store.pending_nodes():
             store.force_unknown(
@@ -785,7 +1237,7 @@ def _validate_move_date(value: str) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run Ripple Checkpoint 1")
+    parser = argparse.ArgumentParser(description="Run Ripple Checkpoint 2")
     parser.add_argument("--move-date", default=DEFAULT_SCENARIO["event"]["move_date"], type=_validate_move_date)
     parser.add_argument("--max-depth", default=3, type=int)
     parser.add_argument("--max-nodes", default=24, type=int)

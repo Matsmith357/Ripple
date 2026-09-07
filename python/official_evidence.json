@@ -1,0 +1,1142 @@
+{
+  "catalog_version": "checkpoint-2.official.1",
+  "label": "VERIFIED PUBLIC EVIDENCE — RETRIEVED FROM OFFICIAL SOURCES",
+  "generated_from": "Independent direct retrieval of underlying public pages and official PDFs; never search snippets",
+  "classification_policy": {
+    "PRIMARY_OFFICIAL": "Official government, statutory, agency, or USPS source on an allowlisted domain.",
+    "AUTHORITATIVE_SECONDARY": "Recognized regulator association or similar authoritative secondary body.",
+    "UNVERIFIED": "Source not on an allowlisted authoritative domain.",
+    "EVIDENCE_GAP": "No adequate evidence retrieved for the queried consequence."
+  },
+  "documents": [
+    {
+      "source_id": "OFFICIAL-0B768090F812",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://codes.ohio.gov/ohio-revised-code/chapter-3321",
+      "publisher": "Ohio Revised Code (Ohio Legislative Service Commission)",
+      "title": "Chapter 3321 | School Attendance; Section 3321.01 | Compulsory school age - requirements for admission to kindergarten or first grade - pupil personnel services committee",
+      "domains": [
+        "education",
+        "school",
+        "children",
+        "family"
+      ],
+      "keywords": [
+        "child",
+        "children",
+        "school attendance",
+        "enrollment",
+        "compulsory school age"
+      ],
+      "content": "A child between six and eighteen years of age is \"of compulsory school age\" for the purpose of sections 3321.01 to 3321.13 of the Revised Code. A child under six years of age who has been enrolled in kindergarten also shall be considered \"of compulsory school age\" for the purpose of sections 3321.01 to 3321.13 of the Revised Code unless at any time the child's parent or guardian, at the parent's or guardian's discretion and in consultation with the child's teacher and principal, formally withdraws the child from kindergarten. The compulsory school age of a child shall not commence until the beginning of the term of such schools, or other time in the school year fixed by the rules of the board of the district in which the child resides.",
+      "retrieved_at": "2026-09-07T13:30:52-04:00",
+      "retrieval_context": "Official Ohio Revised Code Chapter 3321 page opened directly; the displayed Section 3321.01 was marked Effective: March 20, 2026 and Latest Legislation: House Bill 114 - 136th General Assembly.",
+      "supports": [
+        "Statutory scope of compulsory-school-age provisions: children age six through eighteen, plus specified enrolled kindergarten children under six.",
+        "Local school-district term or rule is a prerequisite to commencement of a child's compulsory school age.",
+        "No move-related obligation, adult-only obligation, document list, or deadline for a person with no children is stated in this excerpt."
+      ],
+      "limitations": "This is an official legal-text page, but the excerpt defines the covered population and commencement only. It does not state that an adult who has no children has no education-related obligations, nor does it prescribe a moving procedure or documents for Alex.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.children"
+      ],
+      "content_sha256": "3ec85ddd45093c89b8285884905e2cd25bc951126588bafa67689a212d7df10a"
+    },
+    {
+      "source_id": "OFFICIAL-0EB5557845A3",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://tax.ohio.gov/individual/school-district-income-tax",
+      "publisher": "Ohio Department of Taxation (State of Ohio)",
+      "title": "School District Income Tax",
+      "domains": [
+        "tax",
+        "payroll",
+        "employer",
+        "withholding",
+        "residency",
+        "school district"
+      ],
+      "keywords": [
+        "part year resident",
+        "income tax",
+        "withholding",
+        "it 4",
+        "employer",
+        "school district",
+        "permanent move"
+      ],
+      "content": "Only Ohio residents can be residents of a school district. Part-year residents of Ohio are also considered residents of a school district during their time as Ohio residents.\n\nNot all school districts have a separate income tax. As of January 2026, 210 Ohio school districts have an income tax. Any person that receives income while a resident of a taxing school district is subject to the school district income tax. To find your school district and its tax rate, enter your full home address into The Finder:\n\nUnlike city taxes, you only pay school district income taxes based on where you live, not where you work.\n\nIf you live or move into a taxing school district, you will need to let your employer know to withhold school district tax as soon as possible. Complete an IT 4 form and provide it to your employer. Make sure to use both the school district name and number on the form.",
+      "retrieved_at": "2026-09-07T13:30:52-04:00",
+      "retrieval_context": "Opened directly from the deployed tax.ohio.gov Ohio Department of Taxation page, which identifies itself as an official State of Ohio site. This is page content, not a search-result snippet.",
+      "supports": [
+        "School-district residency during the Ohio-resident portion of a part-year resident’s year.",
+        "The dependency on Alex’s full home address and whether that district taxes income.",
+        "The direction to notify the employer and give it IT 4 information after moving into a taxing district."
+      ],
+      "limitations": "A city alone (Columbus) does not identify a school district number, tax type, or rate. This source does not establish that Alex’s particular Columbus address lies in a taxing district.",
+      "deadline": null,
+      "destination": "Alex's employer after confirming the school district with Ohio's Finder",
+      "required_items": [],
+      "required_context_paths": [
+        "person.employer",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "04c98481bd54322a14b8f28cd1d8d80741bd79f0ac71ae6c630fd7e907e06a8c"
+    },
+    {
+      "source_id": "OFFICIAL-111699FA6C00",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://www.bmv.ohio.gov/new-to-ohio.aspx",
+      "publisher": "Ohio Department of Public Safety, Ohio Bureau of Motor Vehicles",
+      "title": "New Ohio Residents",
+      "domains": [
+        "driver license",
+        "driving",
+        "identity",
+        "ohio bmv"
+      ],
+      "keywords": [
+        "driver license",
+        "out of state license",
+        "new resident",
+        "deputy registrar",
+        "vision screening",
+        "acceptable documents"
+      ],
+      "content": "\"Welcome to Ohio! You are considered an Ohio resident once you: * Take a job, * Sign a lease, * Buy a home, or * Enroll children in school\"\n\n\"Within 30 days of establishing residency, you are responsible for transferring your out-of-state driver license or ID card, vehicle title, and vehicle registration to Ohio.\"\n\n\"If you are at least 16 years of age and have an unexpired out-of-state driver license (non-CDL), you can apply for an Ohio driver license.\"\n\n\"Step 1: Gather acceptable documents to prove your current legal name, date of birth, Social Security number, citizenship or legal presence in the United States, and Ohio residential address.\"\n\n\"Step 2: Present your unexpired out-of-state driver license and acceptable documents at any Deputy Registrar license agency.\"\n\n\"You will be asked to complete a vision screening to demonstrate you meet Ohio vision standards for driver license issuance.\"\n\n\"You will be asked to complete the Application Information for Standard/Compliant Ohio Driver License or ID Card (BMV 5745).\"",
+      "retrieved_at": "2026-09-07T13:31:27-04:00",
+      "retrieval_context": "Fetched the deployed Ohio BMV new-resident webpage directly; page identified itself as an official State of Ohio site and as Ohio Department of Public Safety, Ohio Bureau of Motor Vehicles.",
+      "supports": [
+        "Ohio BMV's stated residence triggers",
+        "BMV-stated 30-day transfer timing",
+        "eligibility condition for an unexpired out-of-state non-CDL",
+        "BMV-stated document categories, in-person presentation, vision screening, and application form"
+      ],
+      "limitations": "The page conditions the application statement on being at least 16 and holding an unexpired out-of-state non-CDL. It does not establish Alex's age, Indiana license expiration/status, exact Ohio-residency trigger date, or which credential type Alex elects.",
+      "deadline": {
+        "text": "Within 30 days of establishing Ohio residency.",
+        "kind": "DAYS_AFTER_MOVE_DATE",
+        "days": 30
+      },
+      "destination": "Ohio BMV Deputy Registrar license agency; County Clerk of Courts Title Office for vehicle title",
+      "required_items": [
+        "Unexpired out-of-state driver license",
+        "Proof of legal name, date of birth, Social Security number, U.S. citizenship or legal presence, and Ohio residential address",
+        "BMV 5745 application",
+        "Vision screening"
+      ],
+      "required_context_paths": [
+        "person.drivers_license.held",
+        "person.drivers_license.state",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "122616ee945667a568ab7f50d02c59b72df19a9455105d0dd4901e137d21a30c"
+    },
+    {
+      "source_id": "OFFICIAL-1A52842EB37F",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://www.bmv.ohio.gov/vr-firstissuance.aspx",
+      "publisher": "Ohio Department of Public Safety, Bureau of Motor Vehicles",
+      "title": "Vehicle Registration — First Issuance",
+      "domains": [
+        "vehicle",
+        "title",
+        "registration",
+        "inspection",
+        "ohio bmv"
+      ],
+      "keywords": [
+        "vehicle title",
+        "vehicle registration",
+        "license plates",
+        "out of state",
+        "vin inspection",
+        "physical inspection"
+      ],
+      "content": "All registrants must visit a local deputy registrar license agency and sign a proof of Financial Responsibility Statement. See our Mandatory Insurance page to learn more about Ohio’s financial responsibility requirements.\n\nAll registrants must provide the following (if applicable):\n\n* If leased, a lease agreement and power of attorney documents\n* If vehicle is in an E-Check county, E-Check will be required\n  + For gasoline vehicles 6-25 years old and hybrid vehicles 7-25 years old\n\n#### Passenger Car and Motorcycle\n\n* Ohio Certificate of Title or Memorandum of Title\n* Ohio driver license, Ohio state ID or proof of Social Security number\n* Approved Document List\n* Tax ID number if titled in a business name\n\n#### E-Check\n\nGasoline vehicles 6 to 25 years old and hybrid vehicles 7 to 25 years old owned by residents of the following counties must be tested every two years:\n\n* Cuyahoga\n* Geauga\n* Lake\n* Lorain\n* Medina\n* Portage\n* Summit",
+      "retrieved_at": "2026-09-07T13:30:47-04:00",
+      "retrieval_context": "Directly opened the deployed official Ohio BMV first-issuance page to capture the registration visit and financial-responsibility statement requirement, passenger-car list, and published E-Check county list.",
+      "supports": [
+        "Deputy-registrar visit and signed proof-of-Financial-Responsibility Statement for all registrants.",
+        "Registration documents for the page’s passenger-car/motorcycle category.",
+        "E-Check is explicitly conditional on E-Check-county status, vehicle fuel/type, and age; the BMV page’s listed counties are reproduced in the excerpt."
+      ],
+      "limitations": "The scenario identifies a personally owned vehicle but not its vehicle class, fuel type, model year, or the resident county used for registration. The page does not say whether an existing Indiana insurance policy itself meets any particular Ohio insurance-standard requirement.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.vehicle.owns_personally",
+        "person.vehicle.state",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "cd16399192ba76ad9afdc96f61824f7351e6ce31421ef89a76d3e34affca71c4"
+    },
+    {
+      "source_id": "OFFICIAL-1E1BBC1BB6FF",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://www.bmv.ohio.gov/titles-new.aspx",
+      "publisher": "Ohio Department of Public Safety, Bureau of Motor Vehicles",
+      "title": "Vehicle Titles — How to Title",
+      "domains": [
+        "vehicle",
+        "title",
+        "registration",
+        "inspection",
+        "ohio bmv"
+      ],
+      "keywords": [
+        "vehicle title",
+        "vehicle registration",
+        "license plates",
+        "out of state",
+        "vin inspection",
+        "physical inspection"
+      ],
+      "content": "#### Transfer an Out-of-State Title to Ohio\n\nIn order to register a vehicle and obtain license plates in Ohio, an out-of-state title must be converted to an Ohio title.\n\n#### What Do I Need to Bring to the Title Office?\n\n* Out-of-state title certificate\n* Bill of Sale if purchased from an Out-of-State dealer\n* Acceptable identification (please contact your County Clerk of Courts Title Office for details) and payment for title fees\n* An out-of-state vehicle identification number (VIN) inspection. Inspections can be obtained at the following:\n  + Ohio deputy registrar license agency (see current fees)\n  + Participating Clerk of Courts Title Office\n  + Participating Ohio licensed motor vehicle dealership\n* For lease transactions only, two original powers of attorney from lessor (one to obtain an Ohio title and one to obtain vehicle registration and license plates)\n* Payment for title fees\n* Sales tax on the purchase price\n\n#### Important Information to Remember\n\n* For dual ownership, both parties must be present, unless a power of attorney is provided\n* Social Security numbers are required for all parties\n* Photocopies of a title are not accepted\n* If your lienholder has your title, you must complete a transfer request form and send it to your lienholder. Please contact a County Clerk of Courts Title Office to obtain the form",
+      "retrieved_at": "2026-09-07T13:32:05-04:00",
+      "retrieval_context": "Directly opened the deployed official Ohio BMV page and extracted its specific ‘Transfer an Out-of-State Title to Ohio’ section; no search-result snippet was used as evidence.",
+      "supports": [
+        "BMV’s stated prerequisite sequence: out-of-state title conversion before Ohio registration and plates.",
+        "BMV title-office document/information list for an out-of-state title conversion, including title certificate, identification, VIN inspection, fees, and Social Security numbers.",
+        "Conditional items: bill of sale only for an out-of-state dealer purchase; two original lessor powers of attorney only for a lease; transfer-request form if a lienholder has the title."
+      ],
+      "limitations": "The page directs the customer to contact the County Clerk of Courts Title Office for identification details and payment options. It does not establish that Alex’s Indiana driver license alone is the clerk’s acceptable identification, whether Alex has a lien, or whether tax is owed in Alex’s individual circumstances.",
+      "deadline": null,
+      "destination": "Ohio County Clerk of Courts Title Office",
+      "required_items": [
+        "Out-of-state title certificate; photocopies are not accepted",
+        "Acceptable identification and Social Security numbers for all parties",
+        "Out-of-state VIN inspection",
+        "Title fees and any supported conditional documents"
+      ],
+      "required_context_paths": [
+        "person.vehicle.owns_personally",
+        "person.vehicle.state",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "6b794fb2458a196053f98493687c8fc88ac4ee1ebe7d24c09d6716fc45ef70b2"
+    },
+    {
+      "source_id": "OFFICIAL-3707BCD8EB6F",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://insurance.ohio.gov/consumers/automobile/automobile-insurance-guide",
+      "publisher": "Ohio Department of Insurance",
+      "title": "Automobile Insurance Guide",
+      "domains": [
+        "auto insurance",
+        "insurance",
+        "policy",
+        "garaging"
+      ],
+      "keywords": [
+        "auto insurance",
+        "policy",
+        "address",
+        "vehicle",
+        "garaging",
+        "premium",
+        "report changes"
+      ],
+      "content": "\"To report any changes that affect your policy, including changes in names, addresses, drivers or vehicles\"\n\n\"For rating purposes, the company will group you with other people whose age, sex, residence, and driving experience are similar to yours\"\n\n\"Where you live:\n\n* City residents tend to have more accidents\n* Auto insurance costs are typically higher in cities than in rural areas\n* In general, you will pay more if you live in an area where claims are higher\"",
+      "retrieved_at": "2026-09-07T13:32:03-04:00",
+      "retrieval_context": "Direct server fetch of the deployed Ohio Department of Insurance consumer webpage. The page identifies itself as \"An official State of Ohio site\" and displays publication date \"November 25, 2024 | Agency.\"",
+      "supports": [
+        "\"To report any changes that affect your policy, including changes in names, addresses, drivers or vehicles\"",
+        "\"For rating purposes, the company will group you with other people whose age, sex, residence, and driving experience are similar to yours\"",
+        "\"In general, you will pay more if you live in an area where claims are higher\""
+      ],
+      "limitations": "The guide directs reporting address changes but does not state a reporting deadline, reporting channel, particular proof/document required, whether an Indiana policy can be endorsed for Ohio, or a carrier-specific garaging-address definition.",
+      "deadline": null,
+      "destination": "Alex's auto insurer",
+      "required_items": [
+        "New address and any changed driver or vehicle information; carrier-specific documentation remains unknown"
+      ],
+      "required_context_paths": [
+        "person.auto_insurance",
+        "person.vehicle.owns_personally",
+        "event.to_state"
+      ],
+      "content_sha256": "c57bc77dbbcf14b157bc56f6f9da9e16b94e34041c611bafca5e9d6dbccd22ef"
+    },
+    {
+      "source_id": "OFFICIAL-38F356B95038",
+      "source_type": "AUTHORITATIVE_SECONDARY",
+      "source_url": "https://content.naic.org/sites/default/files/consumer-auto-shopping-tool.pdf",
+      "publisher": "National Association of Insurance Commissioners (NAIC)",
+      "title": "A Shopping Tool for Auto Insurance",
+      "domains": [
+        "auto insurance",
+        "insurance",
+        "policy",
+        "garaging"
+      ],
+      "keywords": [
+        "auto insurance",
+        "policy",
+        "address",
+        "vehicle",
+        "garaging",
+        "premium",
+        "report changes"
+      ],
+      "content": "\"The National Association of Insurance Commissioners (NAIC) is the oldest association of state government officials. Its members consist of the chief insurance regulators in all 50 states, the District of Columbia and five U.S. territories.\"\n\n\"Principal Driver\n\n• Address, Social Security number, age or years of driving experience, sex, marital status\n\n• Driver’s license number\"\n\n\"Type of car(s) to be insured\n\n• Make (e.g., Ford or Toyota)\n\n• Model (e.g., F-150 or Camry)\n\n• Year\n\n• VIN Number (you often can find this on your title or registration)\n\n• Odometer reading\n\n• Name of lender and/or owner of the car\"\n\n\"• Where do you live? Is that where the car is?\"\n\n\"Location/Garaging Address of the Insured Vehicle\n\nYour premium will be higher or lower based on the insurer’s claims experience in the ZIP code or territory where you live. For example, urban areas tend to have higher rates than suburban or rural areas.\"",
+      "retrieved_at": "2026-09-07T13:31:53-04:00",
+      "retrieval_context": "Direct server fetch and text extraction of the official PDF hosted on content.naic.org. The document’s cover identifies it as \"A Shopping Tool for Auto Insurance\" and says the guide must contain the copyright of the National Association of Insurance Commissioners.",
+      "supports": [
+        "\"• Where do you live? Is that where the car is?\"",
+        "\"Location/Garaging Address of the Insured Vehicle\"",
+        "\"Your premium will be higher or lower based on the insurer’s claims experience in the ZIP code or territory where you live.\"",
+        "\"• Driver’s license number\"",
+        "\"• VIN Number (you often can find this on your title or registration)\""
+      ],
+      "limitations": "This is NAIC consumer educational material rather than Ohio law or Alex’s insurer contract. It describes information insurers may ask and rating considerations; it does not establish Alex’s carrier’s notification process, deadline, state-availability, or required endorsement.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.auto_insurance",
+        "person.vehicle.owns_personally",
+        "event.to_state"
+      ],
+      "content_sha256": "186dbcb2adb30a48f36ce7e1885c6abba0e4c3a2b3b4272c1c4a354133177ad9"
+    },
+    {
+      "source_id": "OFFICIAL-39EC5C81F43A",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://codes.ohio.gov/ohio-revised-code/section-5747.06",
+      "publisher": "Ohio Legislative Service Commission — Ohio Revised Code",
+      "title": "Ohio Revised Code Section 5747.06 | Employer's duty to withhold tax",
+      "domains": [
+        "tax",
+        "payroll",
+        "employer",
+        "withholding",
+        "residency",
+        "school district"
+      ],
+      "keywords": [
+        "part year resident",
+        "income tax",
+        "withholding",
+        "it 4",
+        "employer",
+        "school district",
+        "permanent move"
+      ],
+      "content": "(A) Except as provided in division (E)(3) of this section, every employer, including the state and its political subdivisions, maintaining an office or transacting business within this state and making payment of any compensation to an employee who is a taxpayer shall deduct and withhold from such compensation for each payroll period a tax computed in such manner as to result, as far as practicable, in withholding from the employee's compensation during each calendar year an amount substantially equivalent to the tax reasonably estimated to be due from the employee under this chapter and Chapter 5748. of the Revised Code with respect to the amount of such compensation included in the employee's adjusted gross income during the calendar year.\n\n(E)(1) An employer shall request that each employee furnish the name of the employee's school district of residence;\n\n(2) Each employee shall furnish the employer with sufficient and correct information to enable the employer to withhold the taxes imposed under Chapter 5748. of the Revised Code. The employee shall provide additional or corrected information whenever information previously provided to the employer becomes insufficient or incorrect.",
+      "retrieved_at": "2026-09-07T13:31:01-04:00",
+      "retrieval_context": "Opened directly from codes.ohio.gov, the official Ohio Revised Code publication page. The displayed version was effective October 17, 2019; text was not taken from a search-result snippet.",
+      "supports": [
+        "Statutory condition for an employer maintaining an Ohio office or transacting business in Ohio and paying compensation to withhold tax.",
+        "Employee obligation to furnish and correct school-district residence information for withholding."
+      ],
+      "limitations": "The scenario does not say whether Alex’s employer maintains an Ohio office or transacts business in Ohio, whether Alex works in Ohio, or how payroll is administered. The statute therefore does not establish the employer’s actual withholding obligation on the stated facts.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.employer",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "74dac50ee76dfdcdc3de0e811d01e6a1f0011d52ee794dd4ef217a3fac4d632f"
+    },
+    {
+      "source_id": "OFFICIAL-4AAE7F59FA47",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://bmv.ohio.gov/more-inv-about.aspx",
+      "publisher": "Ohio Department of Public Safety, Bureau of Motor Vehicles",
+      "title": "More Resources — BMV Investigations",
+      "domains": [
+        "vehicle",
+        "title",
+        "registration",
+        "inspection",
+        "ohio bmv"
+      ],
+      "keywords": [
+        "vehicle title",
+        "vehicle registration",
+        "license plates",
+        "out of state",
+        "vin inspection",
+        "physical inspection"
+      ],
+      "content": "#### Out-of-State Inspections (OSI) – For OSIs Only\n\nTo register a vehicle and obtain license plates in Ohio, an out-of-state title must be converted to an Ohio title . An out-of-state VIN inspection can be obtained at any Ohio deputy registrar license agency or any licensed Ohio motor vehicle dealership (call ahead for fee).\n\nIf the vehicle is operable and has a valid registration, take the vehicle to any Ohio deputy registrar license agency for an out-of-state inspection.\n\n#### Non-Operational/Non-Registered Vehicles Only\n\n**If the vehicle is non-operational and/or non-registered continue to read the following prompts.**\n\n* Inspections may take 2-3 weeks for completion.\n* If the vehicle is not in a safe/accessible location, the inspections may not be completed.\n* The vehicle has to be located in the state of Ohio for an out-of-state inspection to be completed.\n* We will not schedule an out-of-state inspection on your vehicle if the vehicle already has an Ohio title.\n\n**The vehicle must be non-operational and/or non-registered to submit a request for BMV Investigations to schedule and complete an out-of-state inspection.**",
+      "retrieved_at": "2026-09-07T13:32:09-04:00",
+      "retrieval_context": "Directly opened the deployed official Ohio BMV Investigations page for its operating/registered versus non-operating/non-registered out-of-state-inspection pathways.",
+      "supports": [
+        "An operable vehicle with a valid registration can be taken to any Ohio deputy registrar for the out-of-state inspection.",
+        "A licensed Ohio motor-vehicle dealership is another BMV-published VIN-inspection route.",
+        "The BMV Investigations scheduling route is limited to a vehicle that is non-operational and/or non-registered; the page states inspections may take 2–3 weeks and the vehicle has to be in Ohio."
+      ],
+      "limitations": "The 2–3-week statement is an estimate for the specifically limited non-operational/non-registered BMV Investigations route, not a statewide title/registration deadline or general VIN-inspection service time. The scenario does not state operability, current registration validity, or vehicle location on the relevant date.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.vehicle.owns_personally",
+        "person.vehicle.state",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "d2b1bbbcf182910b78cbc4e9d3175c0a5b53a8dba3a15ad5f7519e62162fe91a"
+    },
+    {
+      "source_id": "OFFICIAL-5589A5A14A4E",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://www.bmv.ohio.gov/new-to-ohio.aspx",
+      "publisher": "Ohio Department of Public Safety, Bureau of Motor Vehicles",
+      "title": "More Resources — New Ohio Residents",
+      "domains": [
+        "vehicle",
+        "title",
+        "registration",
+        "inspection",
+        "ohio bmv"
+      ],
+      "keywords": [
+        "vehicle title",
+        "vehicle registration",
+        "license plates",
+        "out of state",
+        "vin inspection",
+        "physical inspection"
+      ],
+      "content": "Welcome to Ohio! You are considered an Ohio resident once you:\n\n* Take a job,\n* Sign a lease,\n* Buy a home, or\n* Enroll children in school\n\n**Within 30 days of establishing residency** , you are responsible for transferring your out-of-state driver license or ID card, vehicle title, and vehicle registration to Ohio.\n\n#### Vehicle Title Transfer\n\nBefore you can register your vehicle and obtain license plates in Ohio, you need to transfer your out-of-state title to Ohio by visiting any County Clerk of Courts Title Office.\n\n#### Ohio Vehicle Registration\n\nAfter titling your vehicle in Ohio, register the vehicle by visiting any Deputy Registrar license agency and presenting the following items:\n\n* Ohio Certificate of Title, Memorandum Title, or Electronic Title Receipt\n* Ohio driver license, Ohio ID card, or proof of Social Security number\n* Tax ID number - if the vehicle is titled in a business name\n* Lease agreement and power of attorney documents - if the vehicle is leased\n* E-Check certificate - if registering in a county that requires E-Check\n* A signed, notarized power of attorney or a Power of Attorney for Ohio Vehicle Registration (BMV 5736) - if your vehicle has multiple owners and any cannot be present",
+      "retrieved_at": "2026-09-07T13:31:07-04:00",
+      "retrieval_context": "Directly opened the deployed official Ohio BMV new-resident page and extracted its residency trigger, explicit deadline, title-to-registration sequence, and first-registration list.",
+      "supports": [
+        "The sole supported new-resident deadline: ‘Within 30 days of establishing residency.’",
+        "The official sequence of county Clerk of Courts title transfer before registration/plates, then registration at a deputy registrar.",
+        "Initial registration document/information requirements and expressly conditional business, lease, E-Check, and multiple-owner items."
+      ],
+      "limitations": "The source lists several independent residency-establishing events; it does not identify which one occurred for Alex or give a rule that an undifferentiated moving date is necessarily the residency-establishment date. It does not identify Alex’s vehicle type, E-Check county, or ownership/lien details.",
+      "deadline": {
+        "text": "Within 30 days of establishing Ohio residency.",
+        "kind": "DAYS_AFTER_MOVE_DATE",
+        "days": 30
+      },
+      "destination": "Ohio BMV Deputy Registrar license agency; County Clerk of Courts Title Office for vehicle title",
+      "required_items": [
+        "Unexpired out-of-state driver license",
+        "Proof of legal name, date of birth, Social Security number, U.S. citizenship or legal presence, and Ohio residential address",
+        "BMV 5745 application",
+        "Vision screening"
+      ],
+      "required_context_paths": [
+        "person.vehicle.owns_personally",
+        "person.vehicle.state",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "9abbb96dc62d7fb22ce9bb86efca0f5271bc9d3d5fac69370548cf179b442eca"
+    },
+    {
+      "source_id": "OFFICIAL-5D3BC1F218E0",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://www.franklincountyohio.gov/County-Government/Elections/Voter-Registration",
+      "publisher": "Franklin County Board of Elections",
+      "title": "Register to Vote",
+      "domains": [
+        "voter registration",
+        "elections",
+        "civic"
+      ],
+      "keywords": [
+        "register to vote",
+        "voter registration",
+        "address",
+        "citizen",
+        "county board",
+        "election deadline"
+      ],
+      "content": "You are qualified to register to vote in Ohio if you meet all the following requirements:\n\n* You are a citizen of the United States.\n* You will be at least 18 years old on or before the day of the general election.\n* You will be a resident of Ohio for at least 30 days immediately before the election in which you want to vote.\n* You are not incarcerated (in jail or prison) for a felony conviction.\n* You have not been declared incompetent for voting purposes by a probate court.\n* You have not been permanently disenfranchised for violations of the election laws.\n\n# Registration Identification Requirements\n\n## Your Signature\n\nYour registration cannot be processed without your signature. On line 14, please affix your signature or mark taking care that it does not touch surrounding lines or type so it can be effectively used to verify your identity.",
+      "retrieved_at": "2026-09-07T17:31:11Z",
+      "retrieval_context": "Opened directly from the deployed Franklin County Board of Elections official government webpage using web fetch; full page returned, not a search-result snippet.",
+      "supports": [
+        "Local Franklin County Board of Elections statement of Ohio voter-registration eligibility conditions relevant to a Columbus resident.",
+        "The signature-processing requirement stated by the local election authority."
+      ],
+      "limitations": "The page does not specify a future election date, the precise move date, or an interstate cancellation/transfer process for Alex's Indiana registration.",
+      "deadline": null,
+      "destination": "Franklin County Board of Elections",
+      "required_items": [],
+      "required_context_paths": [
+        "person.citizenship",
+        "person.voter_registration.registered",
+        "event.to_state",
+        "person.age"
+      ],
+      "content_sha256": "2bf0b2520c7e223ab1887870754df29439db84b37d818ed0e25477b35621a918"
+    },
+    {
+      "source_id": "OFFICIAL-682F90A9A199",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://elicense.ohio.gov/",
+      "publisher": "eLicense Ohio Professional Licensure System (State of Ohio)",
+      "title": "WELCOME TO THE eLicense Ohio Professional Licensure System",
+      "domains": [
+        "professional licensing",
+        "occupation",
+        "employment"
+      ],
+      "keywords": [
+        "professional license",
+        "licensing board",
+        "elicense",
+        "apply",
+        "renew"
+      ],
+      "content": "Have a licensing question? Contact your licensing board or check their website. Help desk representatives are not trained to answer licensing questions.\n\nWELCOME TO THE\neLicense Ohio Professional Licensure System",
+      "retrieved_at": "2026-09-07T13:31:13-04:00",
+      "retrieval_context": "Public eLicense Ohio landing webpage opened directly from its deployed URL.",
+      "supports": [
+        "Official instruction to direct substantive licensing questions to the applicable licensing board or its website."
+      ],
+      "limitations": "The landing page does not determine whether Alex needs a license, and it states no applicable deadline or document requirements.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.professional_license"
+      ],
+      "content_sha256": "2a74d1f368b432aca3a6a883ae13bb764be763186865e67ca768c3f68859d390"
+    },
+    {
+      "source_id": "OFFICIAL-71AB8DCD805F",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://pe.usps.com/text/dmm300/608.htm",
+      "publisher": "United States Postal Service (USPS), Postal Explorer",
+      "title": "Mailing Standards of the United States Postal Service Domestic Mail Manual — 608 Postal Information and Resources, 10.0 Forms of Identification",
+      "domains": [
+        "mail forwarding",
+        "postal",
+        "usps",
+        "change of address"
+      ],
+      "keywords": [
+        "mail forwarding",
+        "change of address",
+        "permanent",
+        "temporary",
+        "identity verification",
+        "ps form 3575"
+      ],
+      "content": "When identification is required, the identification presented must be current. Exhibit 10.2 provides a list of the products and services requiring forms of identification and the number of required forms of acceptable identification (primary and secondary). In certain instances (e.g., COA) when an acceptable primary form of identification does not contain acceptable address identification, the Postal Service may require an acceptable secondary form of identification.\n\nChange-of-Address (COA)\n\nX\n\nTo be accepted as a primary form of identification, the identification must include a clear photograph of the individual bearer.\n\nState-, territory-, or tribal-issued driver’s license.",
+      "retrieved_at": "2026-09-07T13:31:35-04:00",
+      "retrieval_context": "Direct deployed-server fetch of official USPS Postal Explorer DMM 608; relevant identification passages were returned from the official page.",
+      "supports": [
+        "COA requires primary ID according to the exhibited service table.",
+        "Presented ID must be current and primary photo ID must have a clear photograph.",
+        "State-issued driver license is listed as acceptable primary photo identification.",
+        "USPS may require secondary ID if the primary ID does not contain acceptable address identification."
+      ],
+      "limitations": "The stated scenario does not establish that Alex's Indiana driver license is current, has a clear photograph, or contains acceptable address identification.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [
+        "Current primary photo identification; secondary address identification may be required"
+      ],
+      "required_context_paths": [
+        "person.name",
+        "event.from_city",
+        "event.to_city",
+        "event.move_date"
+      ],
+      "content_sha256": "d5b609c047ffd6ff6449eb67578f061b25dd2ef61155e0eafd5734cade83b58b"
+    },
+    {
+      "source_id": "OFFICIAL-73CEAA0E66E5",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://tax.ohio.gov/static/forms/employer_withholding/generic/wth-it4-combined.pdf",
+      "publisher": "Ohio Department of Taxation (State of Ohio)",
+      "title": "Employee’s Withholding Exemption Certificate IT 4 and IT 4 Instructions (Rev. 01/24)",
+      "domains": [
+        "tax",
+        "payroll",
+        "employer",
+        "withholding",
+        "residency",
+        "school district"
+      ],
+      "keywords": [
+        "part year resident",
+        "income tax",
+        "withholding",
+        "it 4",
+        "employer",
+        "school district",
+        "permanent move"
+      ],
+      "content": "You must file an updated IT 4 when any of the information listed below changes (including your marital status or number of dependents).\n\nIf you move during the tax year, complete an updated IT 4 immediately reflecting your new address and/ or school district of residence.\n\nReciprocity Exemption: If you are a resident of Indiana, Kentucky, Pennsylvania, Michigan or West Virginia and you work in Ohio, you do not owe Ohio income tax on your compensation. Instead, you should have your employer withhold income tax for your resident state. R.C. 5747.05(A)(2).\n\n**The IT 4 does not** **need to be filed with the Department** **of Taxation.** Your employer must maintain a copy as part of its records.",
+      "retrieved_at": "2026-09-07T13:30:50-04:00",
+      "retrieval_context": "Opened directly as the deployed official Ohio Department of Taxation PDF. The retrieved text identifies the form as IT 4, Rev. 01/24; it was not taken from a search-result snippet.",
+      "supports": [
+        "Explicit instruction to update the IT 4 immediately after an in-tax-year move to reflect the new address and/or school district.",
+        "The scope of the Indiana reciprocity withholding exemption: an Indiana resident who works in Ohio.",
+        "The IT 4 is supplied to and retained by the employer, rather than filed with the Department."
+      ],
+      "limitations": "The form does not establish Alex’s permanent residence or work location. Its Section III waiver states that the employee is a full-year resident of Indiana; it cannot on its own resolve eligibility for a person who may become an Ohio part-year resident.",
+      "deadline": {
+        "text": "Immediately after moving during the tax year.",
+        "kind": "TEXTUAL"
+      },
+      "destination": "Alex's employer",
+      "required_items": [
+        "Updated IT 4 with name, SSN, address, school district name and number, signature, and date"
+      ],
+      "required_context_paths": [
+        "person.employer",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "36df5c8d85767dd42d363736e3bc3b5798a65cd805b71d138d4d6738eac914a1"
+    },
+    {
+      "source_id": "OFFICIAL-73E7C0F1DE3F",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://www.bmv.ohio.gov/dl-identity-documents.aspx",
+      "publisher": "Ohio Department of Public Safety, Ohio Bureau of Motor Vehicles",
+      "title": "Driver License & ID Cards — Acceptable Documents",
+      "domains": [
+        "driver license",
+        "driving",
+        "identity",
+        "ohio bmv"
+      ],
+      "keywords": [
+        "driver license",
+        "out of state license",
+        "new resident",
+        "deputy registrar",
+        "vision screening",
+        "acceptable documents"
+      ],
+      "content": "\"Compliant Card Acceptable Documents\n\nApplicants must provide proof of:\n\n1. Full legal name\n2. Date of birth\n3. Legal presence in the US\n4. Social Security number (SSN)\n5. Ohio street address – TWO documents, from different sources, proving Ohio street address that are listed on the Acceptable Document List are required for proof of Ohio residency.\n6. Proof of name change (if applicable)\"\n\n\"Standard Card Acceptable Documents\n\nApplicants must provide proof of:\n\n1. Full legal name\n2. Date of birth\n3. Legal presence in the US\n4. Social Security number\n5. Ohio street address\n6. Proof of name change (if applicable)\"",
+      "retrieved_at": "2026-09-07T13:30:48-04:00",
+      "retrieval_context": "Fetched the deployed Ohio BMV acceptable-documents webpage directly; page identified itself as an official State of Ohio site and linked the current compliant and standard acceptable-document lists.",
+      "supports": [
+        "document elements for Compliant and Standard Ohio credentials",
+        "two-different-source Ohio-street-address documents for a Compliant credential",
+        "conditional proof-of-name-change requirement"
+      ],
+      "limitations": "The page distinguishes Compliant from Standard credentials. Alex's requested credential type and whether Alex's current legal name differs from identity documents are not supplied.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.drivers_license.held",
+        "person.drivers_license.state",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "954551a323802685f2f661d1fcbcc0e1dc1725d7aa38010e7f8021b27cd918d9"
+    },
+    {
+      "source_id": "OFFICIAL-7883F4808AA5",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://codes.ohio.gov/ohio-administrative-code/rule-4501:1-1-21",
+      "publisher": "Ohio Legislative Service Commission",
+      "title": "Ohio Administrative Code, Rule 4501:1-1-21 | Acceptable identification to be submitted along with an application for a temporary instruction (learner's) permit identification card, driver's license, commercial driver's license, motorcycle operator's license, or identification card",
+      "domains": [
+        "driver license",
+        "driving",
+        "identity",
+        "ohio bmv"
+      ],
+      "keywords": [
+        "driver license",
+        "out of state license",
+        "new resident",
+        "deputy registrar",
+        "vision screening",
+        "acceptable documents"
+      ],
+      "content": "\"(C) A person who applies for first issuance of an Ohio credential, or issuance when an Ohio credential has been expired for more than six months shall present identification documents sufficient to establish the person's: (1) Full legal name; (2) Date of birth; (3) Social security number (SSN); (4) Street address of the person's principal residence in the state of Ohio; and (5) Status as a citizen, permanent resident, or temporary resident of the United States.\"\n\n\"(D) All documents shall be an original or a copy bearing an original certification by the issuing authority. Uncertified copies or copies of certified copies shall not be acceptable. Failure to provide sufficient acceptable identification documents shall result in the denial of the Ohio credential.\"\n\n\"(J) If the source documents presented do not establish the person's current Ohio residential street address, the applicant shall present additional documents containing the applicant's name and current address within Ohio to establish that address to the satisfaction of the registrar or deputy registrar. A post office box or other mail box address is not acceptable.\"\n\n\"(N) If any person fails to provide acceptable identification documents as required by this rule, the person shall not be issued an Ohio credential by the registrar of motor vehicles or any deputy registrar. Additional documentation may be required if the above documentation provided is determined to not be sufficient.\"",
+      "retrieved_at": "2026-09-07T13:31:33-04:00",
+      "retrieval_context": "Fetched the deployed Ohio Administrative Code rule directly from codes.ohio.gov. The page labels the text \"Ohio Administrative Code\" and displayed an effective date of November 1, 2022.",
+      "supports": [
+        "first-issuance identification elements",
+        "original/certified-document rule and denial result",
+        "principal-residence street-address condition and nonacceptance of post-office/mailbox addresses",
+        "registrar/deputy-registrar sufficiency determination"
+      ],
+      "limitations": "The rule provides the document standard for first issuance; it does not establish Alex's precise documentation, actual principal-residence address, or any date by which a particular address document will be available.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.drivers_license.held",
+        "person.drivers_license.state",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "d337121ecbabd787286800f8a2508dbe582d70f90cdfdc1447b83e9f1d136055"
+    },
+    {
+      "source_id": "OFFICIAL-78BA2A5D7FD2",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://www.ohiosos.gov/assets/vr-form-english.pdf",
+      "publisher": "Ohio Secretary of State",
+      "title": "Ohio Voter Registration and Information Update Form (Form 4010, prescribed by the Ohio Secretary of State (02/2026))",
+      "domains": [
+        "voter registration",
+        "elections",
+        "civic"
+      ],
+      "keywords": [
+        "register to vote",
+        "voter registration",
+        "address",
+        "citizen",
+        "county board",
+        "election deadline"
+      ],
+      "content": "**Residential Address (required)** - _No P.O. Boxes. Enter new address if changed._ **Residency Requirements:** For voting purposes, your home address is the place you consider your permanent home. It is where you live and plan to return whenever you are away.\n\n**Identification (required)**\n\nIf you have a current Ohio driver license or state ID card, you **MUST** provide that number (two letters followed by six numbers).\n\n**IF YOU DO NOT HAVE** an Ohio driver license or state ID card, you must provide the last four digits of your Social Security number.\n\nI have not been issued an Ohio driver license, state ID card, or Social Security number.\n\n**Signature (required)** _Please write your cursive, handwritten signature or make your legal mark, taking care that it does not touch the surrounding lines, so when it is digitally imaged by your county board of elections, it can effectively be used to identify your signature._\n\n**Today’s date (required)** - _MM/DD/YYYY_\n\nTO ENSURE YOUR INFORMATION IS RECEIVED, PLEASE DO THE FOLLOWING:\n\n1. Print this form.\n\n2. Make sure all required fields are complete.\n\n3. Sign and date your form.\n\n4. Fold and insert your form into an envelope.\n\n5. Mail your form to your county board of elections.\n\n**NOTICES** This form must be _received or postmarked_ by the 30th day before an election in which you intend to vote.",
+      "retrieved_at": "2026-09-07T17:31:01Z",
+      "retrieval_context": "Opened directly from the deployed Ohio Secretary of State official PDF URL using web fetch; full extracted PDF text returned, not a search-result snippet.",
+      "supports": [
+        "Paper-form identity-information requirement when the applicant does not have an Ohio driver license or state ID card.",
+        "Required residential-address, signature, and date fields/instructions on the state-prescribed form.",
+        "Paper-form mailing instruction and the explicit filing deadline."
+      ],
+      "limitations": "The form does not provide a specific Franklin County mailing address; it directs applicants to VoteOhio.gov/Boards for the county board address. It does not establish that Alex is age-eligible or meets every listed eligibility condition.",
+      "deadline": {
+        "text": "Received or postmarked by the 30th day before the election in which Alex intends to vote.",
+        "kind": "CONDITIONAL"
+      },
+      "destination": "Alex's Ohio county board of elections",
+      "required_items": [
+        "Residential address, identification number or last four SSN digits, signature, and date"
+      ],
+      "required_context_paths": [
+        "person.citizenship",
+        "person.voter_registration.registered",
+        "event.to_state",
+        "person.age"
+      ],
+      "content_sha256": "94619776526ac6a2e653b1af7b334595731b4f75a8b33c093011bc08104dd98a"
+    },
+    {
+      "source_id": "OFFICIAL-A024FBCBE898",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://tax.ohio.gov/individual/who-must-file/what-does-ohio-residency-mean-for-taxes",
+      "publisher": "Ohio Department of Taxation (State of Ohio)",
+      "title": "What Does Ohio Residency Mean for Taxes",
+      "domains": [
+        "tax",
+        "payroll",
+        "employer",
+        "withholding",
+        "residency",
+        "school district"
+      ],
+      "keywords": [
+        "part year resident",
+        "income tax",
+        "withholding",
+        "it 4",
+        "employer",
+        "school district",
+        "permanent move"
+      ],
+      "content": "Taxpayers who permanently move into or out of Ohio during the year would be considered part-year residents of Ohio.\n\nThe Ohio Department of Taxation looks at various items to help determine a taxpayer's residency status, such as your:\n\n* Driver's license or state identification\n* Vehicle registration\n* Voter registration\n* Owner-occupancy or homestead exemption credit\n\n**Reciprocity Wage Deduction:** For residents of Kentucky, Michigan, Indiana, Pennsylvania, or West Virginia. To qualify for this deduction, you must have received wages that were taxed by Ohio. You may only deduct the portion of wages that were taxed by Ohio.",
+      "retrieved_at": "2026-09-07T13:31:09-04:00",
+      "retrieval_context": "Opened directly from the deployed tax.ohio.gov Ohio Department of Taxation page; the page identifies itself as an official State of Ohio site. This is page content, not a search-result snippet.",
+      "supports": [
+        "Ohio’s statement that a permanent in-year move into Ohio is part-year residency.",
+        "Officially listed residency factors relevant to Alex’s Indiana driver license and voter registration; vehicle registration is a listed factor, not merely vehicle ownership.",
+        "The stated Ohio reciprocity-wage-deduction category for Indiana residents."
+      ],
+      "limitations": "The page conditions the part-year statement on a permanent move. It does not say that any single listed factor determines domicile or residency, and it does not determine whether Alex’s configurable move is permanent.",
+      "deadline": null,
+      "destination": "Ohio Department of Taxation",
+      "required_items": [],
+      "required_context_paths": [
+        "person.employer",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "516822fff2c394987017ac81e1ea24a632affd0e772e798c68fed82e373baae9"
+    },
+    {
+      "source_id": "OFFICIAL-A5813EAFC90F",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://education.ohio.gov/Topics/Early-Learning/Kindergarten",
+      "publisher": "Ohio Department of Education and Workforce",
+      "title": "Kindergarten",
+      "domains": [
+        "education",
+        "school",
+        "children",
+        "family"
+      ],
+      "keywords": [
+        "child",
+        "children",
+        "school attendance",
+        "enrollment",
+        "compulsory school age"
+      ],
+      "content": "Compulsory school age, or the minimum age at which a child must be enrolled in and attend school, is age 6. A family can choose to wait until a child turns 6 before enrolling the child in kindergarten.\n\nFamilies planning ahead can check local school district calendars online for start dates or contact districts directly to confirm the first day of instruction for future years.",
+      "retrieved_at": "2026-09-07T13:30:51-04:00",
+      "retrieval_context": "Official Ohio Department of Education and Workforce 'Kindergarten' page opened directly; page displayed 'Last Modified: 8/24/2026 3:53:55 PM.'",
+      "supports": [
+        "Agency description of compulsory school age as the minimum age at which a child must be enrolled in and attend school.",
+        "A local school district's calendar or direct confirmation is a stated source for a future first day of instruction."
+      ],
+      "limitations": "The page addresses children, families, and school enrollment. It does not state a move-related filing, deadline, or document requirement for an adult with no children.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.children"
+      ],
+      "content_sha256": "8bf7263af9e151f7f9f0e95d8c3a427e040653a789e498efe1d309a44b68015c"
+    },
+    {
+      "source_id": "OFFICIAL-AE31986C828A",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://publicsafety.ohio.gov/links/bmv2430.pdf",
+      "publisher": "Ohio Department of Public Safety, Bureau of Motor Vehicles",
+      "title": "BMV 2430 (5/25) — Acceptable Documents List: Compliant DL-ID Card",
+      "domains": [
+        "driver license",
+        "driving",
+        "identity",
+        "ohio bmv"
+      ],
+      "keywords": [
+        "driver license",
+        "out of state license",
+        "new resident",
+        "deputy registrar",
+        "vision screening",
+        "acceptable documents"
+      ],
+      "content": "\"To prove identity, you must show proof of the following five elements: 1 - Full Legal Name*; 2 - Date of Birth; 3 - Legal Presence in US; 4 - Social Security Number; and 5 - Ohio Street Address\"\n\n\"TWO documents, from different sources, proving Ohio Street Address that are listed on the Acceptable Document List are required for proof of Ohio residency.\"\n\n\"A UNITED STATES PASSPORT or A UNITED STATES PASSPORT CARD – Valid and unexpired with photograph\"\n\n\"BIRTH CERTIFICATE – Birth record, either original or certified copy, issued by an appropriate governmental agency of any state, territory, or possession of the United States\"\n\n\"SOCIAL SECURITY CARD – Issued by the Social Security Administration (SSA); metal card is not acceptable\"\n\n\"W-2 (WAGE AND TAX STATEMENT) – Displaying full Social Security Number; cannot be handwritten. Current or last previous tax year\"\n\n\"RENTER, HOMEOWNER, LIFE, or AUTOMOBILE INSURANCE POLICY or CARD – Current and valid\"\n\n\"PAYCHECK STATEMENT or STUB – Issued within the last 12 months\"\n\n\"UTILITY BILL – For example: electric, gas, phone, water, sewer, cable, satellite, heating oil, or propane provider, etc. and issued within the last 12 months (Utility bills from 2 different sources will satisfy the 2 required proof of address documents)\"\n\n\"NOTE: STATE ISSUED DRIVER LICENSE - Issued by any state, territory, or possession of the United States, with photograph, valid and unexpired is acceptable for waiving driver exam testing requirements.\"",
+      "retrieved_at": "2026-09-07T13:31:36-04:00",
+      "retrieval_context": "Fetched and opened the official BMV 2430 PDF directly from public safety.ohio.gov. The document is labeled \"OHIO DEPARTMENT OF PUBLIC SAFETY — BUREAU OF MOTOR VEHICLES\" and \"BMV 2430 5/25.\"",
+      "supports": [
+        "examples and stated currency conditions for documents on the Compliant-card list",
+        "two-source Ohio-address proof rule for a Compliant credential",
+        "potential U.S.-citizenship/legal-presence and SSN evidence listed by BMV",
+        "potential Ohio-address evidence types",
+        "stated exam-test waiver condition for a valid, unexpired, photographic state driver license"
+      ],
+      "limitations": "This is expressly the Compliant DL-ID Card list. The evidence only establishes that listed documents can support the elements shown on the form; Alex's possession of a passport, birth certificate, SSN card/W-2, documents bearing the Ohio address, or qualifying unexpired photographic Indiana license is not specified.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.drivers_license.held",
+        "person.drivers_license.state",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "026f7dd8bc0ed7d98250296474c69330d220ae42a7d724a8c2ae9ed7a21c39c5"
+    },
+    {
+      "source_id": "OFFICIAL-B766A81555BC",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://codes.ohio.gov/ohio-revised-code/section-4507.213",
+      "publisher": "Ohio Legislative Service Commission",
+      "title": "Ohio Revised Code, Section 4507.213 | Surrender of foreign driver's license",
+      "domains": [
+        "driver license",
+        "driving",
+        "identity",
+        "ohio bmv"
+      ],
+      "keywords": [
+        "driver license",
+        "out of state license",
+        "new resident",
+        "deputy registrar",
+        "vision screening",
+        "acceptable documents"
+      ],
+      "content": "\"(A) Any person who becomes a resident of this state, within thirty days of becoming a resident, shall surrender any driver's license, temporary instruction permit, or identification card issued by another state to the registrar of motor vehicles or a deputy registrar. If such a person intends to operate a motor vehicle upon the public roads or highways, the person shall apply for a temporary instruction permit or driver's license in this state. If the person fails to apply for a driver's license or temporary instruction permit within thirty days of becoming a resident, the person shall not operate any motor vehicle in this state under a license or permit issued by another state.\"\n\n\"(B)(1) Whoever violates division (A) of this section is guilty of a minor misdemeanor.\"\n\n\"(C) For purposes of division (A) of this section, \"resident\" means any person to whom any of the following applies: (1) The person maintains their principal residence in this state and does not reside in this state as a result of the person's active service in the United States armed forces. (2) The person is determined by the registrar of motor vehicles to be a resident in accordance with standards adopted by the registrar under section 4507.01 of the Revised Code.\"",
+      "retrieved_at": "2026-09-07T13:30:48-04:00",
+      "retrieval_context": "Fetched the deployed Ohio Revised Code section directly from codes.ohio.gov. The page labels the text \"Ohio Revised Code\" and states that Legislative Service Commission staff updates the Revised Code on an ongoing basis; displayed effective date: June 30, 2021.",
+      "supports": [
+        "statutory 30-day surrender and application rule for a person who becomes an Ohio resident",
+        "restriction on operating in Ohio under another state's license after failure to apply within 30 days",
+        "statutory resident definition",
+        "minor-misdemeanor consequence stated in the section"
+      ],
+      "limitations": "Section 4507.213 supplies the legal rule but does not identify when Alex's configurable move fact results in a principal residence or a registrar residency determination. Its wording requires application if the resident intends to operate a motor vehicle on public roads or highways; it does not itself state a test-waiver rule.",
+      "deadline": {
+        "text": "Within 30 days of becoming an Ohio resident.",
+        "kind": "DAYS_AFTER_MOVE_DATE",
+        "days": 30
+      },
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.drivers_license.held",
+        "person.drivers_license.state",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "3b7388a332a55261e7bdf1e7a601085f8589e2b0407ca1f2c49ea645075b7b86"
+    },
+    {
+      "source_id": "OFFICIAL-BDFF927BD2CC",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://codes.ohio.gov/assets/laws/revised-code/authenticated/45/4505/4505.061/10-24-2024/4505.061-10-24-2024.pdf",
+      "publisher": "Ohio Revised Code / Ohio Legislative Service Commission",
+      "title": "Section 4505.061 — Physical inspection certificate of motor vehicle last previously registered in another state (Authenticated PDF; effective October 24, 2024)",
+      "domains": [
+        "vehicle",
+        "title",
+        "registration",
+        "inspection",
+        "ohio bmv"
+      ],
+      "keywords": [
+        "vehicle title",
+        "vehicle registration",
+        "license plates",
+        "out of state",
+        "vin inspection",
+        "physical inspection"
+      ],
+      "content": "(A) If the application for a certificate of title refers to a motor vehicle last previously registered in another state, the application shall be accompanied by a physical inspection certificate issued by the registrar of motor vehicles. A physical inspection of a motor vehicle shall consist of verifying the make, body type, model, and mileage of, and manufacturer's vehicle identification number from, the motor vehicle for which the certificate of title is desired.\n\n(B) The physical inspection certificate shall be in such form as is designated by the registrar. Except as provided for in division (C) of this section, the physical inspection of the motor vehicle shall occur at one of the following:\n\n(1) A deputy registrar's office;\n\n(2) An established place of business of a licensed motor vehicle dealer located in this state;\n\n(3) A clerk of the court of common pleas' office if the clerk offers such physical inspections.",
+      "retrieved_at": "2026-09-07T13:31:45-04:00",
+      "retrieval_context": "Directly opened and extracted the deployed authenticated official PDF, rather than relying on a search-result snippet. The PDF identifies the text as Ohio Revised Code section 4505.061, effective October 24, 2024.",
+      "supports": [
+        "Mandatory physical-inspection certificate for a certificate-of-title application for a motor vehicle last previously registered in another state.",
+        "The VIN inspection’s specified verified data and authorized inspection locations.",
+        "The inspection must use the registrar-designated physical-inspection certificate form."
+      ],
+      "limitations": "The provision does not supply a new-resident deadline, identify the particular documents a county clerk will accept as identification, or state an appointment/availability rule for a particular Columbus office.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.vehicle.owns_personally",
+        "person.vehicle.state",
+        "event.to_state",
+        "event.move_date"
+      ],
+      "content_sha256": "b33618b74b004479aaab6c9fa3cc998d2dd3ca3bf3a9b3b65b151c1a5ba9c3f9"
+    },
+    {
+      "source_id": "OFFICIAL-D61FF28E482B",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://ohio.gov/jobs/resources/elicense-ohio",
+      "publisher": "Ohio.gov (State of Ohio)",
+      "title": "eLicense Ohio",
+      "domains": [
+        "professional licensing",
+        "occupation",
+        "employment"
+      ],
+      "keywords": [
+        "professional license",
+        "licensing board",
+        "elicense",
+        "apply",
+        "renew"
+      ],
+      "content": "Many types of professional licensing in Ohio are managed by eLicense Ohio.\n\nAt eLicense Ohio, you can verify a license, file a complaint, or apply for and renew licenses issued by a range of state agencies, boards, and commissions.\n\nUse our Licenses & Permits list to find the agency associated with a particular license or permit.",
+      "retrieved_at": "2026-09-07T13:31:08-04:00",
+      "retrieval_context": "Public Ohio.gov resource webpage opened directly from its deployed URL. The page identifies itself as an official State of Ohio site.",
+      "supports": [
+        "Official description of eLicense Ohio's functions: verify, complain, apply, and renew.",
+        "Official routing instruction to identify the agency associated with a particular license or permit."
+      ],
+      "limitations": "This page does not say that an interstate move alone creates a professional-licensing requirement, does not address a person with no professional license, and provides no deadline or document checklist for Alex.",
+      "deadline": null,
+      "destination": "Applicable Ohio licensing board, only if Alex later needs a regulated credential",
+      "required_items": [],
+      "required_context_paths": [
+        "person.professional_license"
+      ],
+      "content_sha256": "f5960de5d0a527d15cc85cb8c995c4f30155de0f438bd0931db72e849a266187"
+    },
+    {
+      "source_id": "OFFICIAL-DFDEDE0BB920",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://insurance.ohio.gov/wps/wcm/connect/gov/d40aa62a-ab81-4f57-b315-99ba5ed64e7f/Automobile+Insurance+101-4.pdf?MOD=AJPERES&CONVERT_TO=url&CACHEID=ROOTWORKSPACE.Z18_JQGCH4S04P41206HNUKVF31000-d40aa62a-ab81-4f57-b315-99ba5ed64e7f-pFUVsQt",
+      "publisher": "Ohio Department of Insurance",
+      "title": "Automobile Insurance 101",
+      "domains": [
+        "auto insurance",
+        "insurance",
+        "policy",
+        "garaging"
+      ],
+      "keywords": [
+        "auto insurance",
+        "policy",
+        "address",
+        "vehicle",
+        "garaging",
+        "premium",
+        "report changes"
+      ],
+      "content": "\"Where you park your car can also impact premiums. If you have access to an indoor garage or locked parking lot – places that decrease the likelihood that your car will be stolen – you may qualify for lower premiums. The geographic region in which you live may impact your premiums. For example, areas prone to extreme weather – hail, wind storms, hurricanes, etc. – with higher traffic patterns or higher risk of theft may have higher insurance rates.\"",
+      "retrieved_at": "2026-09-07T13:31:24-04:00",
+      "retrieval_context": "Direct server fetch and text extraction of an official PDF hosted at insurance.ohio.gov. The PDF displays \"Automobile Insurance 101\" and \"insurance.ohio.gov.\"",
+      "supports": [
+        "\"Where you park your car can also impact premiums.\"",
+        "\"The geographic region in which you live may impact your premiums.\""
+      ],
+      "limitations": "The publication discusses premium factors; it does not instruct how or when to report a new address or garage location and does not specify documentation.",
+      "deadline": null,
+      "destination": null,
+      "required_items": [],
+      "required_context_paths": [
+        "person.auto_insurance",
+        "person.vehicle.owns_personally",
+        "event.to_state"
+      ],
+      "content_sha256": "a0c1cfb11a409d54b72f37734661540faebf0e24e6142a2e47beb9a3c57d46ba"
+    },
+    {
+      "source_id": "OFFICIAL-E251290D63B2",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://www.ohiosos.gov/elections/register-to-vote",
+      "publisher": "Ohio Secretary of State",
+      "title": "Register to Vote",
+      "domains": [
+        "voter registration",
+        "elections",
+        "civic"
+      ],
+      "keywords": [
+        "register to vote",
+        "voter registration",
+        "address",
+        "citizen",
+        "county board",
+        "election deadline"
+      ],
+      "content": "What you'll need to get started:\n\nTo register online you will need to provide the following:\n\n* Ohio driver’s license or Ohio identification card number\n* Name\n* Date of Birth\n* Address\n* Last four digits of your Social Security number\n\nIf you do not have any portion of the required information, you must complete the Voter Registration and Information Update Form . Once you complete this form, you must sign and send it to your county board of elections . Alternatively, you may also download and print the form to fill it out by hand.\n\n**NOTICE:** Forms must be received or postmarked by the 30th day before an election at which you intend to vote.",
+      "retrieved_at": "2026-09-07T17:30:58Z",
+      "retrieval_context": "Opened directly from the deployed Ohio Secretary of State .gov webpage using web fetch; full page returned, not a search-result snippet.",
+      "supports": [
+        "The online-registration information listed by the Ohio Secretary of State.",
+        "The alternative form route if the applicant does not have any portion of the listed online information.",
+        "The explicit received-or-postmarked deadline for an election at which the applicant intends to vote."
+      ],
+      "limitations": "The page gives no calendar election date and does not state whether an out-of-state driver license can substitute for an Ohio driver license or Ohio identification card number in online registration.",
+      "deadline": {
+        "text": "Received or postmarked by the 30th day before the election in which Alex intends to vote.",
+        "kind": "CONDITIONAL"
+      },
+      "destination": "Ohio online voter registration or Alex's county board of elections",
+      "required_items": [
+        "Online: Ohio driver license or ID number, name, date of birth, address, and last four SSN digits",
+        "If online information is unavailable: signed voter registration form sent to county board of elections"
+      ],
+      "required_context_paths": [
+        "person.citizenship",
+        "person.voter_registration.registered",
+        "event.to_state",
+        "person.age"
+      ],
+      "content_sha256": "9c3a0a907c4d3b90ae259e9e9b3528969442a6731dde7ba75788219d2e2b611f"
+    },
+    {
+      "source_id": "OFFICIAL-F8454EA8D30E",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://pe.usps.com/text/dmm300/507.htm",
+      "publisher": "United States Postal Service (USPS), Postal Explorer",
+      "title": "Mailing Standards of the United States Postal Service Domestic Mail Manual — 507 Mailer Services",
+      "domains": [
+        "mail forwarding",
+        "postal",
+        "usps",
+        "change of address"
+      ],
+      "keywords": [
+        "mail forwarding",
+        "change of address",
+        "permanent",
+        "temporary",
+        "identity verification",
+        "ps form 3575"
+      ],
+      "content": "A record of permanent change-of-address orders is kept by Post Offices for 18 months, from the end of the month when the change takes effect. Generally, forwarding is available for the first 12 months.\n\nCustomers may extend a permanent change-of-address order for up to an additional 18 months of forwarding by purchasing Extended Mail Forwarding service at a Post Office, or online through the Change of Address Application (Mover’s Guide) on usps.com.\n\nA customer temporarily moving away may have mail forwarded for a specific period of time, not to exceed 12 months (364 total consecutive days).\n\nEvery temporary change-of-address order must specify both beginning and end dates.\n\nCustomers may use one of the following methods to file a change-of-address with the Post Office:\n\n1. Mail or present PS Form 3575 to any Post Office, or as the Postal Service otherwise directs. Customers must provide an acceptable primary form of identification as specified under 608.10.2 and 608.10.3 when presenting PS Form 3575 at the Post Office.\n2. Use Internet Change of Address (ICOA) at moversguide.usps.com. Customers using the ICOA method must:\n\n1. Pass device-reputation authentication verification. If not, a mobile phone number verification may be required, and a One-Time Passcode or verification link will be texted to the customer’s cell phone. If online identity verification is not successful, the customer will be directed to a Post Office authorized to verify the customer‘s identity in person.\n2. Provide a valid credit card number for authentication verification.",
+      "retrieved_at": "2026-09-07T13:30:57-04:00",
+      "retrieval_context": "Direct deployed-server fetch of official USPS Postal Explorer DMM 507; relevant forwarding passages were returned from the official page.",
+      "supports": [
+        "Generally 12 months of permanent forwarding; permanent COA record retained 18 months from effective month-end.",
+        "Purchased Extended Mail Forwarding can add up to 18 months.",
+        "Temporary forwarding maximum is 364 consecutive days and requires beginning and end dates.",
+        "Filing pathways and online authentication inputs."
+      ],
+      "limitations": "No mandatory advance-filing deadline is stated in the retrieved DMM passages. The fee amount is not stated in the quoted DMM passage.",
+      "deadline": null,
+      "destination": "Official USPS Change of Address website or a local Post Office",
+      "required_items": [],
+      "required_context_paths": [
+        "person.name",
+        "event.from_city",
+        "event.to_city",
+        "event.move_date"
+      ],
+      "content_sha256": "0ae7710b13f900acc032c9687724e3dcca562592b11693e70c0d6d7445c82e50"
+    },
+    {
+      "source_id": "OFFICIAL-FF08A60A693E",
+      "source_type": "PRIMARY_OFFICIAL",
+      "source_url": "https://www.usps.com/manage/forward.htm",
+      "publisher": "United States Postal Service (USPS)",
+      "title": "Standard Forward Mail & Change of Address",
+      "domains": [
+        "mail forwarding",
+        "postal",
+        "usps",
+        "change of address"
+      ],
+      "keywords": [
+        "mail forwarding",
+        "change of address",
+        "permanent",
+        "temporary",
+        "identity verification",
+        "ps form 3575"
+      ],
+      "content": "If you're moving, submit a permanent change of address request so your USPS ® mail is properly rerouted to your new address.\n\nIf you're only relocating for 15 days up to 1 year (like going to school or staying with family or friends), submit a temporary change of address request.\n\nPlan ahead. Although mail forwarding may begin within 3 business days of your submitted request, it's best to allow up to 2 weeks. Mail will be forwarded to your new address as it comes, piece by piece.\n\nYour change of address order only changes your mailing address with the Post Office. You must still update government agencies (like for your benefits, driver's license, and voter registration) and companies (like banks, insurance, online stores, etc.).\n\n1. Visit your local Post Office location with acceptable photo ID and any other required documents.\n2. Request a free Mover's Guide packet.\n3. Fill out the PS Form 3575 found inside the packet, and give it to the retail associate. They will use your photo ID to verify your identity, then process your change of address request.\n\nTo submit a change of address, you must verify your identity.",
+      "retrieved_at": "2026-09-07T13:30:50-04:00",
+      "retrieval_context": "Direct deployed-server fetch of the official USPS page; complete page body returned successfully.",
+      "supports": [
+        "Permanent versus temporary COA distinction.",
+        "Planning lead-time statement: may begin within 3 business days; USPS says it is best to allow up to 2 weeks.",
+        "In-person method: PS Form 3575 and acceptable photo ID.",
+        "COA does not update non-USPS government or company address records."
+      ],
+      "limitations": "The page states planning guidance, not a mandatory advance-filing deadline; it does not establish Alex's COA type, addresses, effective date, or online-verification result.",
+      "deadline": {
+        "text": "No mandatory deadline stated; USPS recommends allowing up to 2 weeks for forwarding to begin.",
+        "kind": "GUIDANCE"
+      },
+      "destination": "Official USPS Change of Address website or a local Post Office",
+      "required_items": [
+        "Old and new mailing addresses",
+        "Online identity verification and matching billing address, or acceptable photo ID for in-person filing",
+        "PS Form 3575 for in-person filing"
+      ],
+      "required_context_paths": [
+        "person.name",
+        "event.from_city",
+        "event.to_city",
+        "event.move_date"
+      ],
+      "content_sha256": "642311e828c35e1126c6806d0cde3e05d28eeb903cbc762aad14aa0953144303"
+    }
+  ]
+}

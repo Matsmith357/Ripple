@@ -1,0 +1,29 @@
+{
+  "checkpoint": 2,
+  "fully_passes": false,
+  "reason": "The final exact-code live Strands rerun was blocked by an HTTP 412 usage-exhausted response from the configured model gateway.",
+  "deterministic_validation": {
+    "official_catalog_records": 27,
+    "python_tests": {"passed": 24, "failed": 0},
+    "typescript_check": "PASS",
+    "production_build": "PASS",
+    "vitest": {"passed": 3, "failed": 0, "files": 2},
+    "webdev_health": "PASS",
+    "pre_run_ui": "PASS",
+    "blocked_run_error_ui": "PASS"
+  },
+  "prior_live_strands_proof": {
+    "graph_artifact": "checkpoint2-prior-live-runtime-graph.json",
+    "validator_artifact": "checkpoint2-prior-live-validation.json",
+    "runtime_checks_passed": 14,
+    "runtime_checks_failed": 0,
+    "disclosure": "This successful live graph predates the final source-required context-path and tool-payload hardening changes."
+  },
+  "final_live_rerun": {
+    "status": "BLOCKED",
+    "provider_status": 412,
+    "provider_message": "usage exhausted",
+    "partial_graph_accepted": false
+  },
+  "checkpoint_3_started": false
+}

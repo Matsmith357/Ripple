@@ -1,0 +1,23 @@
+Checkpoint 2 UI verification — 2026-09-07
+
+Pre-run desktop view:
+- Ripple displays the CHECKPOINT 2 badge and “Strands reasoning · verified public evidence”.
+- Alex Morgan, Indianapolis → Columbus, configurable move date, and Run Ripple button are visible.
+- The existing graph area remains intact and correctly begins empty, emphasizing runtime generation.
+- Layout is readable with no clipping or obvious overlap at the captured desktop viewport.
+- TypeScript/LSP health reports no errors.
+
+Result-state verification remains constrained by the model gateway's HTTP 412 usage-exhausted response. The error path will be tested separately and recorded below.
+
+Blocked live-run verification:
+- The Run Ripple button enters the visible “Running Ripple…” state and shows live investigation activity.
+- After the worker fails, the button re-enables and a prominent error card appears; no partial graph is presented as a success.
+- The current server bridge exposes only the generic command failure in this state. It should be improved to surface the worker's safe structured error message (HTTP 412 usage exhausted) without leaking credentials.
+
+Post-fix browser recheck:
+- The refreshed page renders the final Checkpoint 2 labels and empty runtime graph state correctly.
+- Clicking Run Ripple renders the in-progress agent activity state and disables the scenario controls while the request is active.
+
+Final blocked-run state:
+- The error card now surfaces the worker's structured RuntimeError and the model gateway's HTTP 412 usage-exhausted cause.
+- The UI does not display a partial or stale graph after failure, and Run Ripple becomes available again.

@@ -3,12 +3,12 @@ from pathlib import Path
 
 import pytest
 
-from ripple_engine import DEFAULT_SCENARIO, InvestigationStore, MockEvidenceProvider
+from ripple_engine import DEFAULT_SCENARIO, InvestigationStore, OfficialEvidenceProvider
 
 
 @pytest.fixture()
 def store() -> InvestigationStore:
-    provider = MockEvidenceProvider(Path(__file__).with_name("mock_evidence.json"), clock=lambda: "2026-09-05T00:00:00Z")
+    provider = OfficialEvidenceProvider(Path(__file__).with_name("official_evidence.json"), clock=lambda: "2026-09-05T00:00:00Z")
     return InvestigationStore(
         scenario=json.loads(json.dumps(DEFAULT_SCENARIO)),
         evidence_provider=provider,
@@ -41,6 +41,11 @@ def test_non_applicable_consequence_can_be_recorded(store: InvestigationStore) -
         "Alex has no professional license, so the retrieved trigger is absent.",
         source_ids,
         "The person context negates the source's applicability condition.",
+        applicability={
+            "rule": "Professional licensing applies to a person seeking or holding a regulated credential.",
+            "why_applies": "Alex has no professional license.",
+            "trigger_facts": ["person.professional_license"],
+        },
     )
     assert recorded["status"] == "DOES_NOT_APPLY"
 
@@ -48,7 +53,11 @@ def test_non_applicable_consequence_can_be_recorded(store: InvestigationStore) -
 def test_consequence_can_spawn_a_downstream_child(store: InvestigationStore) -> None:
     parent = store.spawn("Transfer vehicle title", "vehicle", "root_move", "Personally owned vehicle moved", "test model")
     evidence = store.search_evidence(parent["node_id"], "vehicle title identification inspection prerequisite", "vehicle")
-    vin_source = next(item["source_id"] for item in evidence["results"] if "VIN" in item["source_id"])
+    vin_source = next(
+        item["source_id"]
+        for item in evidence["results"]
+        if "inspection" in f"{item['title']} {item['excerpt']}".lower()
+    )
     child = store.spawn(
         "Complete prerequisite vehicle identification inspection",
         "inspection",
@@ -88,7 +97,11 @@ def test_duplicate_investigations_are_prevented(store: InvestigationStore) -> No
 def test_maximum_depth_guard_and_no_pending_stop_condition(store: InvestigationStore) -> None:
     level_one = store.spawn("Level one", "test", "root_move", "test", "test model")
     evidence = store.search_evidence(level_one["node_id"], "vehicle title identification inspection prerequisite", "vehicle")
-    vin_source = next(item["source_id"] for item in evidence["results"] if "VIN" in item["source_id"])
+    vin_source = next(
+        item["source_id"]
+        for item in evidence["results"]
+        if "inspection" in f"{item['title']} {item['excerpt']}".lower()
+    )
     level_two = store.spawn(
         "Vehicle identification inspection",
         "inspection",
@@ -149,7 +162,7 @@ def test_every_terminal_conclusion_retains_evidence_and_reason(store: Investigat
     assert node.reason
     assert node.model_reasoning
     assert node.evidence
-    assert node.evidence[0]["source_type"] in {"MOCK_SYNTHETIC", "EVIDENCE_GAP"}
+    assert node.evidence[0]["source_type"] in {"PRIMARY_OFFICIAL", "AUTHORITATIVE_SECONDARY", "EVIDENCE_GAP"}
 
 
 def test_final_graph_is_assembled_from_mutable_runtime_state(store: InvestigationStore) -> None:
