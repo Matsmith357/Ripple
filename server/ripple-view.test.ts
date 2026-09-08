@@ -5,6 +5,7 @@ import { ConsequenceGraph } from "../client/src/components/ripple/ConsequenceGra
 import { NodeInspector } from "../client/src/components/ripple/NodeInspector";
 import {
   deadlineEvidence,
+  buildJudgeWalkthrough,
   isRuntimeGraph,
   isVerifiedPublicEvidence,
   summarizeGraph,
@@ -182,5 +183,39 @@ describe("Ripple competition view model", () => {
     expect(actionMarkup).toContain("Primary official");
     expect(actionMarkup).toContain("Deadline traced to Ohio BMV");
     expect(unknownMarkup).toContain("Ripple stopped rather than guessed");
+  });
+
+  it("builds the judge path from runtime statuses and causal provenance", () => {
+    const runtime = runFixture();
+    runtime.graph.nodes.push(node({
+      id: "professional-license",
+      title: "Professional licensing",
+      status: "DOES_NOT_APPLY",
+    }));
+
+    const steps = buildJudgeWalkthrough(runtime);
+    expect(steps.map(step => step.id)).toEqual([
+      "event",
+      "graph",
+      "action",
+      "recursion",
+      "unknown",
+      "not-applicable",
+      "complete",
+    ]);
+    expect(steps.find(step => step.id === "action")?.nodeId).toBe("license");
+    expect(steps.find(step => step.id === "recursion")?.nodeId).toBe("documents");
+    expect(steps.find(step => step.id === "unknown")?.nodeId).toBe("voter");
+    expect(steps.find(step => step.id === "not-applicable")?.nodeId).toBe("professional-license");
+  });
+
+  it("omits unavailable proof beats instead of fabricating demonstration nodes", () => {
+    const runtime = runFixture();
+    runtime.graph.nodes = runtime.graph.nodes.filter(item => item.status !== "UNKNOWN" && item.depth < 2);
+    runtime.graph.edges = runtime.graph.edges.filter(edge => runtime.graph.nodes.some(item => item.id === edge.target));
+    const ids = buildJudgeWalkthrough(runtime).map(step => step.id);
+
+    expect(ids).not.toContain("unknown");
+    expect(ids).not.toContain("recursion");
   });
 });

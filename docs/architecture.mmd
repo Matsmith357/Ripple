@@ -1,0 +1,53 @@
+flowchart TB
+  EVENT["User / Event\nAlex moved Indiana → Ohio"] --> UI["Ripple UI\nDiscover Ripples"]
+
+  subgraph STRANDS["STRANDS — REASONING + TOOL ORCHESTRATION"]
+    direction LR
+    AGENT["Discovery + investigation agent\nReasons from event and person context"]
+    TOOLS["General-purpose tools\ncontext · investigate · find · record · spawn"]
+    RECURSE["Recursive reasoning\nDoes this consequence create another?"]
+    AGENT -->|selects and calls| TOOLS
+    TOOLS -->|evidence + graph state| AGENT
+    AGENT -->|evidence-backed child candidate| RECURSE
+    RECURSE -->|next pending investigation| AGENT
+  end
+
+  subgraph EVIDENCE["RETRIEVED EVIDENCE — FACTS, NOT MODEL KNOWLEDGE"]
+    direction LR
+    SOURCES["Authoritative public sources\nOhio BMV · Secretary of State · Taxation\nUSPS · Ohio DOI · official law"]
+    CATALOG["Replaceable retrieval layer\nURL · publisher · title · timestamp\nexcerpt · query · limitations"]
+    SOURCES --> CATALOG
+  end
+
+  subgraph GUARDS["DETERMINISTIC SAFEGUARDS — ACCEPT OR DOWNGRADE"]
+    direction LR
+    TRUST["Trust + applicability\nsource class · node binding · Alex facts\ndeadline + action traceability"]
+    SAFETY["Recursion + stopping\nduplicate · investigated · causal evidence\nmax depth · node budget · no new nodes"]
+    STATES["Terminal state enforcement\nACTION_PREPARED · DOES_NOT_APPLY\nHUMAN_DECISION · UNKNOWN · RESOLVED"]
+    TRUST --> STATES
+    SAFETY --> STATES
+  end
+
+  GRAPH["Runtime consequence graph\nparent/child edges · reasons · provenance\nuncertainty · prepared actions"]
+  RESULT["Action + evidence experience\ngraph · node detail · official links\nSOURCE EVIDENCE ≠ RIPPLE REASONING"]
+
+  UI -->|tRPC request| AGENT
+  TOOLS -->|query| CATALOG
+  CATALOG -->|retrieved evidence only| TOOLS
+  TOOLS -->|proposed conclusion| TRUST
+  RECURSE -->|proposed child| SAFETY
+  STATES -->|accepted node| GRAPH
+  GRAPH --> RESULT
+  RESULT -.->|inspect the discovered list| UI
+
+  classDef user fill:#fffaf2,stroke:#d76443,color:#20332b,stroke-width:2px;
+  classDef strands fill:#173d32,stroke:#173d32,color:#ffffff,stroke-width:2px;
+  classDef evidence fill:#edf7f3,stroke:#4c8a74,color:#24473b,stroke-width:1.5px;
+  classDef guard fill:#fff5df,stroke:#bd8730,color:#5d4419,stroke-width:1.5px;
+  classDef output fill:#fff1ec,stroke:#df6846,color:#5d2f22,stroke-width:1.5px;
+
+  class EVENT,UI user;
+  class AGENT,TOOLS,RECURSE strands;
+  class SOURCES,CATALOG evidence;
+  class TRUST,SAFETY,STATES guard;
+  class GRAPH,RESULT output;

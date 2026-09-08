@@ -4,9 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ConsequenceGraph, ConsequenceStatus } from "@/components/ripple/ConsequenceGraph";
+import { DemoGuide } from "@/components/ripple/DemoGuide";
 import { NodeInspector } from "@/components/ripple/NodeInspector";
 import { trpc } from "@/lib/trpc";
-import { isRuntimeGraph, summarizeGraph, type RippleRun } from "@/lib/ripple-view";
+import { buildJudgeWalkthrough, isRuntimeGraph, summarizeGraph, type RippleRun, type WalkthroughStep } from "@/lib/ripple-view";
 import {
   AlertTriangle,
   ArrowDown,
@@ -82,6 +83,7 @@ export default function Home() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [phase, setPhase] = useState(0);
   const [traceOpen, setTraceOpen] = useState(false);
+  const [activeWalkthroughId, setActiveWalkthroughId] = useState("event");
 
   const mutation = trpc.ripple.run.useMutation({
     onSuccess: data => {
@@ -89,6 +91,7 @@ export default function Home() {
       setRun(typed);
       const firstAction = typed.graph.nodes.find(node => node.status === "ACTION_PREPARED" && node.parent_id !== null);
       setSelectedId(firstAction?.id ?? typed.graph.nodes.find(node => node.parent_id !== null)?.id ?? typed.graph.root_id);
+      setActiveWalkthroughId("event");
     },
   });
 
@@ -108,6 +111,7 @@ export default function Home() {
   const root = nodes.find(node => node.id === run?.graph.root_id) ?? null;
   const selected = nodes.find(node => node.id === selectedId) ?? root;
   const summary = useMemo(() => run ? summarizeGraph(run) : null, [run]);
+  const walkthrough = useMemo(() => run ? buildJudgeWalkthrough(run) : [], [run]);
   const generatedAt = run ? new Date(run.generated_at).toLocaleString() : null;
 
   const startRun = () => {
@@ -116,6 +120,13 @@ export default function Home() {
     setSelectedId(null);
     setTraceOpen(false);
     mutation.mutate({ moveDate });
+  };
+
+  const selectWalkthroughStep = (step: WalkthroughStep) => {
+    setActiveWalkthroughId(step.id);
+    setSelectedId(step.nodeId);
+    setTraceOpen(step.id === "graph");
+    window.requestAnimationFrame(() => document.getElementById("runtime-graph")?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
   return (
@@ -235,7 +246,9 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="grid min-h-[820px] overflow-hidden rounded-[30px] border border-[#ced8d3] bg-white shadow-[0_20px_60px_rgba(28,49,40,0.08)] xl:grid-cols-[minmax(0,1.65fr)_minmax(390px,.75fr)]">
+            <DemoGuide steps={walkthrough} activeId={activeWalkthroughId} onSelect={selectWalkthroughStep} />
+
+            <div id="runtime-graph" className="scroll-mt-5 grid min-h-[820px] overflow-hidden rounded-[30px] border border-[#ced8d3] bg-white shadow-[0_20px_60px_rgba(28,49,40,0.08)] xl:grid-cols-[minmax(0,1.65fr)_minmax(390px,.75fr)]">
               <div className="min-w-0 border-b border-[#dce3df] bg-[#f7f6f1] xl:border-b-0 xl:border-r">
                 <div className="flex flex-col gap-4 border-b border-[#dce3df] bg-[#fbfbf8] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
@@ -286,7 +299,7 @@ export default function Home() {
       <footer className="border-t border-[#dbe1dd] bg-[#faf9f5]">
         <div className="mx-auto flex max-w-[1600px] flex-col gap-2 px-5 py-5 text-[10px] leading-4 text-[#7b8781] sm:flex-row sm:items-center sm:justify-between lg:px-8">
           <p>Prepared actions only. Ripple never submits filings, payments, insurance changes, or government actions.</p>
-          <p className="font-mono uppercase tracking-[0.1em]">Checkpoint 3 · Part 1</p>
+          <p className="font-mono uppercase tracking-[0.1em]">Checkpoint 3 · Demo ready</p>
         </div>
       </footer>
     </div>

@@ -1,0 +1,55 @@
+{
+  "checkpoint": 3,
+  "status": "PASS_WITH_OPEN_EXTERNAL_GATE",
+  "scope": "One synthetic Alex Morgan Indiana-to-Ohio move scenario",
+  "walkthrough": {
+    "target_duration_seconds": 235,
+    "runtime_derived_node_selection": true,
+    "static_consequence_names_in_product_guide": false,
+    "document": "docs/DEMO_WALKTHROUGH.md"
+  },
+  "architecture": {
+    "source": "docs/architecture.mmd",
+    "render": "docs/architecture.png",
+    "strands_boundary_labeled": true,
+    "deterministic_safeguard_boundary_labeled": true
+  },
+  "repository": {
+    "readme": true,
+    "license": "MIT",
+    "setup_instructions": true,
+    "dependency_files": ["package.json", "pnpm-lock.yaml", "python/requirements.txt"],
+    "testing_instructions": true,
+    "strands_usage_explained": true,
+    "synthetic_demo_disclosed": true,
+    "limitations_disclosed": true,
+    "preexisting_work_disclosed": true,
+    "published": false
+  },
+  "validation": {
+    "python_tests": {"passed": 24, "failed": 0},
+    "vitest": {"passed": 11, "failed": 0, "files": 3},
+    "typescript_check": "PASS",
+    "production_build": "PASS_WITH_NON_BLOCKING_CHUNK_SIZE_WARNING",
+    "desktop_browser": "PASS_1280x900",
+    "mobile_browser": "PASS_390x844",
+    "browser_console": "PASS_NO_OUTPUT"
+  },
+  "cp2_exact_code_live_gate": {
+    "status": "BLOCKED",
+    "http_status": 412,
+    "message": "usage exhausted",
+    "graph_produced": false,
+    "validators_run": 0,
+    "bypass_used": false
+  },
+  "remaining_submission_gaps": [
+    "Produce and archive a fresh exact-code live Strands graph when gateway capacity is available",
+    "Pass all 14 runtime validators on that graph",
+    "Browser-inspect that successful graph in the final competition experience",
+    "Record the live 3-4 minute walkthrough",
+    "Complete competition platform submission fields"
+  ],
+  "checkpoint_3_verdict": "PASS",
+  "submitted_or_published": false
+}

@@ -49,7 +49,10 @@ pids
 # Coverage directory used by tools like istanbul
 coverage/
 *.lcov
-
+# Python caches and local test state
+__pycache__/
+*.py[cod]
+.pytest_cache/
 # nyc test coverage
 .nyc_output
 

@@ -89,6 +89,16 @@ export type GraphSummary = {
   maxDepth: number;
 };
 
+export type WalkthroughStep = {
+  id: string;
+  label: string;
+  title: string;
+  note: string;
+  nodeId: string;
+  status: string;
+  targetSeconds: number;
+};
+
 export function childrenOf(nodes: ConsequenceNode[], parentId: string): ConsequenceNode[] {
   return nodes.filter(node => node.parent_id === parentId);
 }
@@ -125,4 +135,86 @@ export function isVerifiedPublicEvidence(item: Evidence): boolean {
 
 export function isRuntimeGraph(run: RippleRun): boolean {
   return run.generated_at_runtime === true && run.graph.nodes.length > 1 && run.activity.some(event => event.kind === "spawned");
+}
+
+export function buildJudgeWalkthrough(run: RippleRun): WalkthroughStep[] {
+  const nodes = run.graph.nodes;
+  const root = nodes.find(node => node.id === run.graph.root_id);
+  if (!root) return [];
+
+  const action = nodes.find(node =>
+    node.status === "ACTION_PREPARED"
+    && node.parent_id !== null
+    && node.evidence.some(isVerifiedPublicEvidence)
+    && Boolean(node.action.deadline_source_id),
+  ) ?? nodes.find(node => node.status === "ACTION_PREPARED" && node.parent_id !== null);
+  const recursive = nodes.find(node => node.depth > 1 && Boolean(node.caused_by_evidence_id));
+  const unknown = nodes.find(node => node.status === "UNKNOWN");
+  const notApplicable = nodes.find(node => node.status === "DOES_NOT_APPLY");
+
+  return [
+    {
+      id: "event",
+      label: "01 · Event",
+      title: "Start with Alex’s move",
+      note: "One change and person context enter the system—no consequence checklist.",
+      nodeId: root.id,
+      status: root.status,
+      targetSeconds: 25,
+    },
+    {
+      id: "graph",
+      label: "02 · Discovery",
+      title: "Reveal the generated graph",
+      note: `${nodes.length - 1} consequences across runtime-selected domains, with the tool trace available below.`,
+      nodeId: root.id,
+      status: root.status,
+      targetSeconds: 35,
+    },
+    action && {
+      id: "action",
+      label: "03 · Action",
+      title: action.title,
+      note: "Show WHAT, WHY, WHEN, Alex-specific applicability, and the exact supporting source.",
+      nodeId: action.id,
+      status: action.status,
+      targetSeconds: 45,
+    },
+    recursive && {
+      id: "recursion",
+      label: "04 · Recursion",
+      title: recursive.title,
+      note: `Depth ${recursive.depth}; created from parent evidence ${recursive.caused_by_evidence_id}.`,
+      nodeId: recursive.id,
+      status: recursive.status,
+      targetSeconds: 35,
+    },
+    unknown && {
+      id: "unknown",
+      label: "05 · Trust",
+      title: unknown.title,
+      note: "Explain why missing or weak support becomes UNKNOWN instead of an invented obligation.",
+      nodeId: unknown.id,
+      status: unknown.status,
+      targetSeconds: 35,
+    },
+    notApplicable && {
+      id: "not-applicable",
+      label: "06 · Context",
+      title: notApplicable.title,
+      note: "Show the rule and the Alex-specific fact that makes this consequence inapplicable.",
+      nodeId: notApplicable.id,
+      status: notApplicable.status,
+      targetSeconds: 30,
+    },
+    {
+      id: "complete",
+      label: "07 · Complete",
+      title: "Return to the full consequence map",
+      note: "End on the runtime graph, its recursive branch, statuses, source count, and safe stop condition.",
+      nodeId: root.id,
+      status: root.status,
+      targetSeconds: 20,
+    },
+  ].filter((step): step is WalkthroughStep => Boolean(step));
 }
