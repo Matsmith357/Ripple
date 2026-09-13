@@ -8,6 +8,10 @@ This competition prototype deliberately demonstrates one synthetic scenario: **A
 
 Ripple does not load a static Ohio consequence tree. The interface starts with no graph and accepts only the graph returned by the live request.
 
+## Problem and Everyday Agents target user
+
+A person experiencing a consequential everyday change often knows the event but not every administrative, civic, financial, or logistical consequence it creates. Ripple is designed for individuals navigating those changes who need help discovering the questions, actions, and decisions they did not know to ask about. This repository proves that concept with one bounded interstate-move demo; it is not a general life-event product or professional-advice service.
+
 ![Ripple architecture](docs/architecture.png)
 
 ## Demo
@@ -132,6 +136,15 @@ Do not commit credentials. The repository ignores `.env` files.
 
 ## Local setup
 
+Configure the live model gateway in the shell that will run Ripple. Use your own provider values; never commit them:
+
+```bash
+export OPENAI_API_BASE="https://your-openai-compatible-endpoint.example"
+read -rsp "OPENAI_API_KEY: " OPENAI_API_KEY && export OPENAI_API_KEY && echo
+```
+
+The managed WebDev runtime supplies equivalent `BUILT_IN_FORGE_API_URL` and `BUILT_IN_FORGE_API_KEY` variables. Do not copy managed credentials into a public repository. The anonymous Ripple procedure does not require the template's optional OAuth or database integrations.
+
 ```bash
 git clone <repository-url>
 cd ripple-checkpoint-1
@@ -184,7 +197,9 @@ This capacity issue is an **open verification gate**, not a product fallback. Th
 
 Ripple is a bounded hackathon prototype, not legal, tax, insurance, election, or government advice. It covers one synthetic interstate-move scenario. The evidence layer uses curated public-source snapshots rather than live crawling on every run, so sources may change after retrieval. Coverage depends on model discovery and catalog breadth. A single model request can approach the managed runtime timeout. Source allowlists and token-based evidence matching are deterministic but intentionally narrow. `UNKNOWN` is expected when facts or evidence are insufficient. No consequential action is executed.
 
-## Pre-existing work disclosure
+## AI assistance and pre-existing work disclosure
+
+Manus AI assisted with implementation, research synthesis, testing, interface construction, and documentation under the project owner's direction. All generated and modified code remains subject to human review before public release or submission.
 
 The project began from the Manus full-stack WebDev template, which supplied general-purpose React, Vite, Tailwind, Express, tRPC, authentication, and database scaffolding. Ripple's Strands engine, investigation tools, recursive graph logic, evidence catalog and trust layer, runtime validators, tests, competition experience, architecture diagram, and documentation were created for this project. Authentication and database scaffolding remain unused by the one-user public demo.
 
@@ -193,6 +208,30 @@ Checkpoint 1 established the consequence-discovery engine with controlled synthe
 ## License
 
 Released under the [MIT License](LICENSE).
+
+## Export or publish manually
+
+Create a source-only ZIP from the committed repository:
+
+```bash
+git archive --format=zip --output=../ripple-submission.zip HEAD
+```
+
+To publish later, only after the owner approves, authenticate GitHub CLI and push the existing repository to a new public remote:
+
+```bash
+gh auth login
+gh repo create <github-owner>/ripple --public --source=. --remote=github --push
+```
+
+Alternatively, create an empty GitHub repository in the browser and run:
+
+```bash
+git remote add github https://github.com/<github-owner>/ripple.git
+git push -u github main
+```
+
+Review `git status`, `git ls-files`, and the secret scan described in this README before pushing. Do not replace the existing managed `origin` unless the project owner intentionally wants to change it.
 
 ## References
 
